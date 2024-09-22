@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Type Word Processor</title>
+    <title>Type Word Processor with Authentication</title>
     <style>
         body {
             margin: 0;
@@ -19,57 +19,39 @@
             font-size: 24px;
         }
 
-        /* Ribbon styles */
-        .ribbon {
-            background-color: #f1f1f1;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            box-shadow: 0px 4px 2px -2px gray;
+        /* Login form */
+        .auth-container {
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .ribbon-section {
-            display: flex;
-            gap: 10px;
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
         }
 
-        .ribbon-section button {
+        .auth-container button {
             padding: 10px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
             border: none;
-            background-color: #e7e7e7;
             cursor: pointer;
             border-radius: 3px;
         }
 
-        .ribbon-section button:hover {
-            background-color: #ccc;
+        .auth-container button:hover {
+            background-color: #45a049;
         }
 
-        /* Editor section */
-        .editor {
-            padding: 20px;
-            height: calc(100vh - 100px);
-            overflow-y: auto;
-        }
-
-        #editorContent {
-            width: 100%;
-            height: 100%;
-            border: none;
-            outline: none;
-            padding: 20px;
-            font-size: 18px;
-        }
-
-        /* Footer styles */
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+        .editor, .ribbon {
+            display: none;
         }
     </style>
 </head>
@@ -78,6 +60,22 @@
 <header>
     Type - Word Processor
 </header>
+
+<div class="auth-container" id="login-form">
+    <h3>Login</h3>
+    <input type="text" id="login-username" placeholder="Username">
+    <input type="password" id="login-password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register</a></p>
+</div>
+
+<div class="auth-container" id="register-form" style="display:none;">
+    <h3>Create an Account</h3>
+    <input type="text" id="register-username" placeholder="Username">
+    <input type="password" id="register-password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <p>Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+</div>
 
 <!-- Ribbon Menu -->
 <div class="ribbon">
@@ -92,8 +90,8 @@
         <button onclick="execCmd('justifyRight')">Right Align</button>
     </div>
     <div class="ribbon-section">
-        <button onclick="execCmd('undo')">Undo</button>
-        <button onclick="execCmd('redo')">Redo</button>
+        <button onclick="saveFile()">Save</button>
+        <button onclick="loadFile()">Load</button>
     </div>
 </div>
 
@@ -102,26 +100,117 @@
     <iframe id="editorContent" contenteditable="true"></iframe>
 </div>
 
-<!-- Footer Section -->
-<footer>
-    Created by Smart Guy
-</footer>
-
 <script>
-    // Execute the document command
-    function execCmd(command) {
-        let editorContent = document.getElementById('editorContent').contentWindow.document;
-        editorContent.execCommand(command, false, null);
-        editorContent.body.focus(); // Bring focus back to the editor after each command
-    }
+// Show Login form and hide Register form
+function showLoginForm() {
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('register-form').style.display = 'none';
+}
 
-    // Set the editorContent iframe body to be editable and styled
-    window.onload = function () {
-        let editorContent = document.getElementById('editorContent').contentWindow.document;
-        editorContent.designMode = "on";
-        editorContent.body.style.fontFamily = "Arial, sans-serif";
-        editorContent.body.style.fontSize = "18px";
-    };
+// Show Register form and hide Login form
+function showRegisterForm() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+}
+
+// Mock API for user login
+async function login() {
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+
+    const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+            alert('Login successful!');
+            document.querySelector('.editor').style.display = 'block';
+            document.querySelector('.ribbon').style.display = 'flex';
+            document.querySelector('.auth-container').style.display = 'none';
+        } else {
+            alert('Login failed: ' + result.message);
+        }
+    }
+}
+
+// Mock API for user registration
+async function register() {
+    const username = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+
+    const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+            alert('Account created successfully!');
+            showLoginForm();
+        } else {
+            alert('Registration failed: ' + result.message);
+        }
+    }
+}
+
+// Execute the document command for editor
+function execCmd(command) {
+    let editorContent = document.getElementById('editorContent').contentWindow.document;
+    editorContent.execCommand(command, false, null);
+    editorContent.body.focus();
+}
+
+// Save file to server (mock example)
+async function saveFile() {
+    const content = document.getElementById('editorContent').contentWindow.document.body.innerHTML;
+    
+    const response = await fetch('/api/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content })
+    });
+
+    if (response.ok) {
+        alert('File saved successfully!');
+    } else {
+        alert('Error saving file.');
+    }
+}
+
+// Load file from server (mock example)
+async function loadFile() {
+    const response = await fetch('/api/load', {
+        method: 'GET'
+    });
+
+    if (response.ok) {
+        const result = await response.json();
+        const editorContent = document.getElementById('editorContent').contentWindow.document;
+        editorContent.body.innerHTML = result.content;
+    } else {
+        alert('Error loading file.');
+    }
+}
+
+// Set the editorContent iframe body to be editable and styled
+window.onload = function () {
+    let editorContent = document.getElementById('editorContent').contentWindow.document;
+    editorContent.designMode = "on";
+    editorContent.body.style.fontFamily = "Arial, sans-serif";
+    editorContent.body.style.fontSize = "18px";
+};
 </script>
 
 </body>

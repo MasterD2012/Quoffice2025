@@ -1,62 +1,128 @@
 <!DOCTYPE html>
-<html>
-<style>
-body, html {
-  height: 100%;
-  margin: 0;
-}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type Word Processor</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
 
-.bgimg {
-  background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fu0FTYvt.jpg&f=1&nofb=1&ipt=79d125b6034474b850ace306a6adc4a2fecfbfc48be768b05f975887eeb3325a&ipo=images');
-  height: 100%;
-  background-position: center;
-  background-size: cover;
-  position: relative;
-  color: white;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 25px;
-}
+        /* Header style */
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 24px;
+        }
 
-.topleft {
-  position: absolute;
-  top: 0;
-  left: 16px;
-}
+        /* Ribbon styles */
+        .ribbon {
+            background-color: #f1f1f1;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0px 4px 2px -2px gray;
+        }
 
-.bottomleft {
-  position: absolute;
-  bottom: 0;
-  left: 16px;
-}
+        .ribbon-section {
+            display: flex;
+            gap: 10px;
+        }
 
-.middle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
+        .ribbon-section button {
+            padding: 10px;
+            border: none;
+            background-color: #e7e7e7;
+            cursor: pointer;
+            border-radius: 3px;
+        }
 
-hr {
-  margin: auto;
-  width: 40%;
-}
-</style>
+        .ribbon-section button:hover {
+            background-color: #ccc;
+        }
+
+        /* Editor section */
+        .editor {
+            padding: 20px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        #editorContent {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
 <body>
 
-<div class="bgimg">
-  <div class="topleft">
-    <p>Quoffice</p>
-  </div>
-  <div class="middle">
-    <h1>COMING SOON</h1>
-    <hr>
-    <p>35 days left</p>
-  </div>
-  <div class="bottomleft">
-    <p>We are not ready to realise yet!</p>
-  </div>
+<header>
+    Type - Word Processor
+</header>
+
+<!-- Ribbon Menu -->
+<div class="ribbon">
+    <div class="ribbon-section">
+        <button onclick="execCmd('bold')">Bold</button>
+        <button onclick="execCmd('italic')">Italic</button>
+        <button onclick="execCmd('underline')">Underline</button>
+    </div>
+    <div class="ribbon-section">
+        <button onclick="execCmd('justifyLeft')">Left Align</button>
+        <button onclick="execCmd('justifyCenter')">Center</button>
+        <button onclick="execCmd('justifyRight')">Right Align</button>
+    </div>
+    <div class="ribbon-section">
+        <button onclick="execCmd('undo')">Undo</button>
+        <button onclick="execCmd('redo')">Redo</button>
+    </div>
 </div>
+
+<!-- Editor Section -->
+<div class="editor">
+    <iframe id="editorContent" contenteditable="true"></iframe>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    Created by Smart Guy
+</footer>
+
+<script>
+    // Execute the document command
+    function execCmd(command) {
+        let editorContent = document.getElementById('editorContent').contentWindow.document;
+        editorContent.execCommand(command, false, null);
+        editorContent.body.focus(); // Bring focus back to the editor after each command
+    }
+
+    // Set the editorContent iframe body to be editable and styled
+    window.onload = function () {
+        let editorContent = document.getElementById('editorContent').contentWindow.document;
+        editorContent.designMode = "on";
+        editorContent.body.style.fontFamily = "Arial, sans-serif";
+        editorContent.body.style.fontSize = "18px";
+    };
+</script>
 
 </body>
 </html>

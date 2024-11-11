@@ -12,18 +12,22 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             height: 100vh;
+            flex-direction: column;
         }
 
         .container {
             width: 90%;
-            max-width: 900px;
+            max-width: 1200px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
             border: 2px solid #ddd;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
         }
 
         .header {
@@ -31,7 +35,15 @@
             font-weight: bold;
             color: #2a7dff;
             margin-bottom: 20px;
-            text-align: center;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
         }
 
         .sub-header {
@@ -40,6 +52,7 @@
             margin-bottom: 20px;
             line-height: 1.6;
             text-align: center;
+            flex: 1;
         }
 
         .btn-update {
@@ -105,7 +118,6 @@
             text-decoration: none;
         }
 
-        /* Container for status and details */
         .update-status {
             display: flex;
             justify-content: space-between;
@@ -122,14 +134,56 @@
         .status-text span {
             font-weight: bold;
         }
+
+        /* See Also Section */
+        .side-bar {
+            width: 300px;
+            background-color: #f7f7f7;
+            padding: 20px;
+            margin-left: 30px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .side-bar h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #2a7dff;
+        }
+
+        .side-bar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .side-bar ul li {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .side-bar ul li a {
+            color: #2a7dff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .side-bar ul li a:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">Windows Update Center</div>
-        <div class="sub-header">Your system is ready for updates. Stay secure with the latest updates for your device.</div>
+        <div class="header">
+            <img src="quoffice_icon.ico" alt="Logo">
+            <div>Type 2025 - Update Center</div>
+        </div>
+        <div class="sub-header">
+            Your system is ready for updates. Stay secure with the latest updates for your device.
+        </div>
         
-        <!-- Update Button -->
         <button class="btn-update" onclick="checkForUpdate()">Check for Updates</button>
 
         <!-- Progress Bar -->
@@ -150,9 +204,20 @@
             </div>
         </div>
 
-        <div class="footer">
-            Powered by <a href="https://example.com" target="_blank">Example.com</a>
+        <!-- See Also Column for Optional Updates -->
+        <div class="side-bar">
+            <h3>See Also</h3>
+            <ul>
+                <li><a href="#">Optional Update 1: Version 1.2.0</a></li>
+                <li><a href="#">Optional Update 2: New Features</a></li>
+                <li><a href="#">Optional Update 3: Bug Fixes</a></li>
+                <li><a href="#">Optional Update 4: Security Update</a></li>
+            </ul>
         </div>
+    </div>
+
+    <div class="footer">
+        Powered by <a href="https://example.com" target="_blank">Example.com</a>
     </div>
 
     <script>

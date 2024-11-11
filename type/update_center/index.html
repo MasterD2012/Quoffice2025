@@ -178,6 +178,16 @@
             flex-grow: 1;
             padding: 20px;
         }
+
+        .download-link {
+            color: #2a7dff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
         
     </style>
 </head>
@@ -223,15 +233,22 @@
                     <span>Last Checked:</span> <span id="lastChecked">Not Yet</span>
                 </div>
             </div>
+
+            <!-- Download Section for Update Log Only -->
+            <div class="update-log-section">
+                <h3>Update Log</h3>
+                <p>Your system's update history:</p>
+                <a href="#" id="downloadLogLink" class="download-link" download>Download Update Log</a>
+            </div>
         </div>
     </div>
 
     <div class="footer">
-        Powered by <a href="https://example.com" target="_blank">Example.com</a>
+        Powered by <a href="https:/masterd2012.github.io" target="_blank">MasterD2012</a>
     </div>
 
     <script>
-        const versionCheckUrl = 'https://masterd2012.github.io/Quoffice2025/type/update_center/currentversion.txt'; // Replace with actual version URL
+        const versionCheckUrl = 'https://example.com/update/version.txt'; // Replace with actual version URL
         const currentVersion = '1.0.0'; // Replace with dynamic current version from the app
 
         async function checkForUpdate() {
@@ -260,27 +277,18 @@
                     document.getElementById('updateStatus').innerText = 'New update available!';
                     document.getElementById('message').innerHTML = `
                         A new version (${latestVersion.trim()}) is available!<br>
-                        <a href="https://example.com/update/QuofficeEditor.py" class="download-link" download>Click here to download</a>
+                        <a href="https://example.com/update/QuofficeEditor.py" class="download-link" download>Click here to download the update</a>
                     `;
+                    // Enable download link for the update log after an update is found
+                    document.getElementById('downloadLogLink').href = '/path/to/update.log';  // Adjust the path as needed
                 } else {
                     document.getElementById('updateStatus').innerText = 'Your system is up to date.';
-                    document.getElementById('message').innerText = 'You are already using the latest version.';
+                    document.getElementById('message').innerText = 'No updates are available at the moment.';
                 }
-
-                const currentDate = new Date().toLocaleString();
-                document.getElementById('lastChecked').innerText = currentDate;
-
-                // Write update log to a file
-                const updateLog = `Checked for updates on ${currentDate}. Latest version: ${latestVersion.trim()}.\n`;
-                const logBlob = new Blob([updateLog], { type: 'text/plain' });
-                const logUrl = URL.createObjectURL(logBlob);
-                const a = document.createElement('a');
-                a.href = logUrl;
-                a.download = 'update.log';
-                a.click();
             } catch (error) {
-                console.error('Error checking for update:', error);
+                console.error('Error checking for updates:', error);
                 document.getElementById('updateStatus').innerText = 'Error checking for updates.';
+                document.getElementById('message').innerText = 'There was an error checking for updates.';
             }
         }
     </script>

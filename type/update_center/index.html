@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7fb;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,75 +17,66 @@
         }
 
         .container {
-            width: 100%;
+            width: 90%;
             max-width: 900px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .left-column, .right-column {
-            flex: 1;
-            padding: 20px;
-        }
-
-        .left-column {
-            border-right: 1px solid #ddd;
+            border: 2px solid #ddd;
         }
 
         .header {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
-            color: #0078d4;
+            color: #2a7dff;
             margin-bottom: 20px;
+            text-align: center;
         }
 
         .sub-header {
-            font-size: 18px;
-            color: #555;
+            font-size: 16px;
+            color: #333;
             margin-bottom: 20px;
             line-height: 1.6;
+            text-align: center;
         }
 
         .btn-update {
-            background-color: #0078d4;
+            background-color: #2a7dff;
             color: white;
             border: none;
             padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 50px;
+            font-size: 16px;
+            border-radius: 5px;
             cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            width: 50%;
             transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn-update:hover {
-            background-color: #005a9e;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            background-color: #1a5ab9;
         }
 
         .btn-update:active {
-            transform: translateY(0);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #174d7f;
         }
 
         .progress-bar {
             width: 100%;
             height: 10px;
-            background-color: #f1f1f1;
-            border-radius: 50px;
+            background-color: #ddd;
+            border-radius: 10px;
             margin-top: 30px;
             display: none;
         }
 
         .progress-bar div {
             height: 100%;
-            background-color: #0078d4;
-            border-radius: 50px;
+            background-color: #2a7dff;
+            border-radius: 10px;
             width: 0;
             transition: width 0.3s ease;
         }
@@ -93,100 +84,75 @@
         .message {
             margin-top: 20px;
             padding: 20px;
-            border-radius: 8px;
-            background-color: #f3f8ff;
-            border: 1px solid #cce0ff;
-            color: #0078d4;
+            border-radius: 5px;
+            background-color: #e8f4fd;
+            border: 1px solid #2a7dff;
+            color: #2a7dff;
             font-size: 16px;
             font-weight: 500;
+            display: none;
         }
 
         .footer {
             margin-top: 30px;
             font-size: 12px;
             color: #777;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
         }
 
         .footer a {
-            color: #0078d4;
+            color: #2a7dff;
             text-decoration: none;
-            margin-left: 5px;
         }
 
-        .footer a:hover {
-            text-decoration: underline;
+        /* Container for status and details */
+        .update-status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
         }
 
-        .right-column {
-            padding-left: 40px;
+        .status-text {
+            font-size: 14px;
+            color: #333;
         }
 
-        .right-column h3 {
-            font-size: 20px;
-            color: #0078d4;
-            margin-bottom: 10px;
-        }
-
-        .right-column p {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        /* Animation for message pop */
-        @keyframes popMessage {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .message {
-            animation: popMessage 0.5s ease-out;
+        .status-text span {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Left Column -->
-        <div class="left-column">
-            <div class="header">Windows Update Center</div>
-            <div class="sub-header">Your system is ready for updates. Ensure you stay secure and up to date with the latest patches.</div>
-            
-            <button class="btn-update" onclick="checkForUpdate()">Check for Update</button>
-            
-            <div class="progress-bar" id="progressBarContainer">
-                <div id="progressBar"></div>
+        <div class="header">Windows Update Center</div>
+        <div class="sub-header">Your system is ready for updates. Stay secure with the latest updates for your device.</div>
+        
+        <!-- Update Button -->
+        <button class="btn-update" onclick="checkForUpdate()">Check for Updates</button>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBarContainer">
+            <div id="progressBar"></div>
+        </div>
+
+        <!-- Update Message -->
+        <div class="message" id="message"></div>
+
+        <!-- Update Status Information -->
+        <div class="update-status">
+            <div class="status-text">
+                <span>Status:</span> <span id="updateStatus">Checking for updates...</span>
             </div>
-
-            <div class="message" id="message"></div>
+            <div class="status-text">
+                <span>Last Checked:</span> <span id="lastChecked">Not Yet</span>
+            </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="right-column">
-            <h3>Why Update?</h3>
-            <p>Updating ensures your system stays secure, stable, and efficient. With regular updates, you’ll experience improved performance, new features, and better security protections.</p>
-
-            <h3>Latest Features</h3>
-            <ul>
-                <li>Security Enhancements</li>
-                <li>Bug Fixes and Stability Improvements</li>
-                <li>New Features for Enhanced Productivity</li>
-                <li>Better Compatibility with New Software</li>
-            </ul>
+        <div class="footer">
+            Powered by <a href="https://example.com" target="_blank">Example.com</a>
         </div>
-    </div>
-
-    <div class="footer">
-        <span>Powered by <a href="https://example.com" target="_blank">Example.com</a></span>
     </div>
 
     <script>
@@ -194,10 +160,11 @@
         const currentVersion = '1.0.0'; // Replace with dynamic current version from the app
 
         async function checkForUpdate() {
+            // Show progress bar
             document.getElementById('progressBarContainer').style.display = 'block';
             document.getElementById('progressBar').style.width = '0%';
-            document.getElementById('message').innerText = '';
-            
+            document.getElementById('message').style.display = 'none';
+
             // Simulate progress
             let progress = 0;
             const interval = setInterval(() => {
@@ -211,18 +178,26 @@
                 if (!response.ok) throw new Error('Failed to check for updates.');
                 
                 const latestVersion = await response.text();
+                document.getElementById('message').style.display = 'block';
                 document.getElementById('message').innerText = '';
 
                 if (latestVersion.trim() > currentVersion) {
+                    document.getElementById('updateStatus').innerText = 'New update available!';
                     document.getElementById('message').innerHTML = `
                         A new version (${latestVersion.trim()}) is available!<br>
                         <a href="https://example.com/update/QuofficeEditor.py" class="download-link" download>Click here to download</a>
                     `;
                 } else {
+                    document.getElementById('updateStatus').innerText = 'Your system is up to date.';
                     document.getElementById('message').innerText = 'You are already using the latest version.';
                 }
+
+                const currentDate = new Date().toLocaleString();
+                document.getElementById('lastChecked').innerText = currentDate;
             } catch (error) {
+                document.getElementById('message').style.display = 'block';
                 document.getElementById('message').innerText = `Error: ${error.message}`;
+                document.getElementById('updateStatus').innerText = 'Failed to check for updates';
             }
         }
     </script>

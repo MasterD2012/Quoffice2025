@@ -38,6 +38,7 @@
             text-align: left;
             display: flex;
             align-items: center;
+            margin-bottom: 30px;
         }
 
         .header img {
@@ -59,13 +60,13 @@
             background-color: #2a7dff;
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 16px;
+            padding: 10px 20px;
+            font-size: 14px;
             border-radius: 5px;
             cursor: pointer;
             display: block;
             margin: 20px auto;
-            width: 50%;
+            width: 30%;
             transition: all 0.3s ease-in-out;
         }
 
@@ -135,12 +136,12 @@
             font-weight: bold;
         }
 
-        /* See Also Section */
+        /* See Also Section - Moved to Left Side */
         .side-bar {
-            width: 300px;
+            width: 250px;
             background-color: #f7f7f7;
             padding: 20px;
-            margin-left: 30px;
+            margin-right: 30px;
             border-radius: 10px;
             border: 1px solid #ddd;
         }
@@ -172,52 +173,61 @@
             text-decoration: underline;
         }
 
+        /* Content Section */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <img src="https://masterd2012.github.io/Quoffice2025/type/reascources/quoffice_icon.ico" alt="Logo">
-            <div>Type 2025 - Update Center</div>
-        </div>
-        <div class="sub-header">
-            Your system is ready for updates. Stay secure with the latest updates for your device.
-        </div>
-        
-        <button class="btn-update" onclick="checkForUpdate()">Check for Updates</button>
-
-        <!-- Progress Bar -->
-        <div class="progress-bar" id="progressBarContainer">
-            <div id="progressBar"></div>
-        </div>
-
-        <!-- Update Message -->
-        <div class="message" id="message"></div>
-
-        <!-- Update Status Information -->
-        <div class="update-status">
-            <div class="status-text">
-                <span>Status:</span> <span id="updateStatus">Checking for updates...</span>
-            </div>
-            <div class="status-text">
-                <span>Last Checked:</span> <span id="lastChecked">Not Yet</span>
-            </div>
-        </div>
-
-        <!-- See Also Column for Optional Updates -->
+        <!-- See Also Column on Left -->
         <div class="side-bar">
             <h3>See Also</h3>
             <ul>
                 <li><a href="#">Optional Update 1: Version 1.2.0</a></li>
                 <li><a href="#">Optional Update 2: New Features</a></li>
                 <li><a href="#">Optional Update 3: Bug Fixes</a></li>
-                <li><a href="Https://masterd2012.github.io/Quoffice2025/type/">Home Page</a></li>
+                <li><a href="#">Optional Update 4: Security Update</a></li>
             </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="header">
+                <img src="https://masterd2012.github.io/Quoffice2025/type/reascources/quoffice_icon.ico" alt="Logo">
+                <div>Type 2025 - Update Center</div>
+            </div>
+            <div class="sub-header">
+                Your system is ready for updates. Stay secure with the latest updates for your device.
+            </div>
+
+            <button class="btn-update" onclick="checkForUpdate()">Check for Updates</button>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar" id="progressBarContainer">
+                <div id="progressBar"></div>
+            </div>
+
+            <!-- Update Message -->
+            <div class="message" id="message"></div>
+
+            <!-- Update Status Information -->
+            <div class="update-status">
+                <div class="status-text">
+                    <span>Status:</span> <span id="updateStatus">Checking for updates...</span>
+                </div>
+                <div class="status-text">
+                    <span>Last Checked:</span> <span id="lastChecked">Not Yet</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="footer">
-        Powered by <a href="https://masterd2012.github.io" target="_blank">MasterD2012</a>
+        Powered by <a href="https://example.com" target="_blank">Example.com</a>
     </div>
 
     <script>
@@ -259,10 +269,18 @@
 
                 const currentDate = new Date().toLocaleString();
                 document.getElementById('lastChecked').innerText = currentDate;
+
+                // Write update log to a file
+                const updateLog = `Checked for updates on ${currentDate}. Latest version: ${latestVersion.trim()}.\n`;
+                const logBlob = new Blob([updateLog], { type: 'text/plain' });
+                const logUrl = URL.createObjectURL(logBlob);
+                const a = document.createElement('a');
+                a.href = logUrl;
+                a.download = 'update.log';
+                a.click();
             } catch (error) {
-                document.getElementById('message').style.display = 'block';
-                document.getElementById('message').innerText = `Error: ${error.message}`;
-                document.getElementById('updateStatus').innerText = 'Failed to check for updates';
+                console.error('Error checking for update:', error);
+                document.getElementById('updateStatus').innerText = 'Error checking for updates.';
             }
         }
     </script>

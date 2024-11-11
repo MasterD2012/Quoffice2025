@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Center</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Center</h1>
+        <p>Check for the latest updates for your Quoffice Editor application.</p>
+        <button onclick="checkForUpdate()">Check for Update</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        const versionCheckUrl = 'https://example.com/update/version.txt'; // Update URL
+        const currentVersion = '1.0.0'; // Replace with a dynamically retrieved current version
+
+        async function checkForUpdate() {
+            try {
+                const response = await fetch(versionCheckUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const latestVersion = await response.text();
+                document.getElementById('message').innerText = '';
+
+                if (latestVersion.trim() > currentVersion) {
+                    document.getElementById('message').innerHTML = `
+                        New version ${latestVersion.trim()} is available. 
+                        <a href="https://example.com/update/QuofficeEditor.py" download>Download Now</a>
+                    `;
+                } else {
+                    document.getElementById('message').innerText = 'You are using the latest version.';
+                }
+            } catch (error) {
+                document.getElementById('message').innerText = `Error checking for updates: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

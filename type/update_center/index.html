@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e6f0f7;
+            background-color: #f4f7fb;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,16 +18,26 @@
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .left-column, .right-column {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .left-column {
+            border-right: 1px solid #ddd;
         }
 
         .header {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             color: #0078d4;
             margin-bottom: 20px;
@@ -37,7 +47,7 @@
             font-size: 18px;
             color: #555;
             margin-bottom: 20px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .btn-update {
@@ -50,7 +60,6 @@
             cursor: pointer;
             transition: all 0.3s ease-in-out;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
         }
 
         .btn-update:hover {
@@ -62,29 +71,6 @@
         .btn-update:active {
             transform: translateY(0);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .message {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #f3f8ff;
-            border: 1px solid #cce0ff;
-            color: #0078d4;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        .download-link {
-            color: #0078d4;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 2px solid transparent;
-            transition: border-bottom 0.2s ease;
-        }
-
-        .download-link:hover {
-            border-bottom: 2px solid #0078d4;
         }
 
         .progress-bar {
@@ -102,6 +88,17 @@
             border-radius: 50px;
             width: 0;
             transition: width 0.3s ease;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f3f8ff;
+            border: 1px solid #cce0ff;
+            color: #0078d4;
+            font-size: 16px;
+            font-weight: 500;
         }
 
         .footer {
@@ -123,6 +120,23 @@
             text-decoration: underline;
         }
 
+        .right-column {
+            padding-left: 40px;
+        }
+
+        .right-column h3 {
+            font-size: 20px;
+            color: #0078d4;
+            margin-bottom: 10px;
+        }
+
+        .right-column p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
         /* Animation for message pop */
         @keyframes popMessage {
             0% {
@@ -142,15 +156,32 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">Windows Update Center</div>
-        <div class="sub-header">Get the latest updates to enhance your experience and keep your system secure.</div>
-        
-        <button class="btn-update" onclick="checkForUpdate()">Check for Update</button>
-        
-        <div class="message" id="message"></div>
+        <!-- Left Column -->
+        <div class="left-column">
+            <div class="header">Windows Update Center</div>
+            <div class="sub-header">Your system is ready for updates. Ensure you stay secure and up to date with the latest patches.</div>
+            
+            <button class="btn-update" onclick="checkForUpdate()">Check for Update</button>
+            
+            <div class="progress-bar" id="progressBarContainer">
+                <div id="progressBar"></div>
+            </div>
 
-        <div class="progress-bar" id="progressBarContainer">
-            <div id="progressBar"></div>
+            <div class="message" id="message"></div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <h3>Why Update?</h3>
+            <p>Updating ensures your system stays secure, stable, and efficient. With regular updates, you’ll experience improved performance, new features, and better security protections.</p>
+
+            <h3>Latest Features</h3>
+            <ul>
+                <li>Security Enhancements</li>
+                <li>Bug Fixes and Stability Improvements</li>
+                <li>New Features for Enhanced Productivity</li>
+                <li>Better Compatibility with New Software</li>
+            </ul>
         </div>
     </div>
 

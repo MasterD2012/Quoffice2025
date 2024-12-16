@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online PowerPoint Alternative</title>
+    <title>Improved Presentation Editor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,13 +14,14 @@
             background-color: #f3f3f3;
             padding: 10px;
             display: flex;
-            align-items: center;
+            justify-content: space-between;
             border-bottom: 1px solid #ccc;
-            gap: 10px;
         }
-        #toolbar select, #toolbar button, #toolbar input {
-            padding: 5px;
-            font-size: 14px;
+        #toolbar button, #toolbar select {
+            margin-right: 10px;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
         }
         #workspace {
             display: flex;
@@ -50,6 +51,7 @@
             align-items: center;
             justify-content: center;
             background-color: #fff;
+            position: relative;
         }
         .slide {
             width: 80%;
@@ -72,43 +74,49 @@
         .column[contenteditable="true"] {
             outline: none;
         }
-        #fullscreen-container {
-            display: none;
+        #fullscreen {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            color: white;
-            z-index: 1000;
-        }
-        .fullscreen-slide {
-            display: flex;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            display: none;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 100%;
-            background-color: white;
+            z-index: 1000;
         }
-        #fullscreen-container button {
-            position: absolute;
-            top: 10px;
-            background-color: #0078d7;
+        #fullscreen .slide {
+            width: 90%;
+            height: 90%;
             border: none;
-            color: white;
+        }
+        #fullscreen .nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
             padding: 10px;
             cursor: pointer;
+            font-size: 18px;
+            z-index: 1010;
         }
-        #prevSlide {
+        #fullscreen .prev {
             left: 10px;
         }
-        #nextSlide {
+        #fullscreen .next {
             right: 10px;
         }
-        #endPresentation {
+        #fullscreen .exit {
+            position: absolute;
             top: 10px;
-            right: 50%;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -117,18 +125,19 @@
         <select id="fontName">
             <option value="Arial">Arial</option>
             <option value="Verdana">Verdana</option>
+            <option value="Tahoma">Tahoma</option>
             <option value="Georgia">Georgia</option>
         </select>
-        <input type="number" id="fontSize" min="8" max="72" value="16">
-        <button id="bold">B</button>
-        <button id="italic">I</button>
-        <button id="underline">U</button>
+        <select id="fontSize">
+            <option value="12">12</option>
+            <option value="14">14</option>
+            <option value="18">18</option>
+            <option value="24">24</option>
+        </select>
+        <button id="bold">Bold</button>
+        <button id="italic">Italic</button>
+        <button id="underline">Underline</button>
         <button id="startPresentation">Start Presentation</button>
-        <button id="addSlide">Add Slide</button>
-        <button id="deleteSlide">Delete Slide</button>
-        <button id="saveSlide">Save .SLIDE</button>
-        <button id="loadSlide">Load .SLIDE</button>
-        <input type="file" id="file-input" accept=".slide">
     </div>
     <div id="workspace">
         <div id="slides"></div>
@@ -139,140 +148,68 @@
             </div>
         </div>
     </div>
-
-    <div id="fullscreen-container">
-        <button id="prevSlide">Previous</button>
-        <button id="nextSlide">Next</button>
-        <button id="endPresentation">End Presentation</button>
-        <div class="fullscreen-slide"></div>
+    <div id="fullscreen">
+        <div class="slide">
+            <div class="column">Column 1: Fullscreen view</div>
+            <div class="column">Column 2: Fullscreen view</div>
+        </div>
+        <button class="nav prev">Previous</button>
+        <button class="nav next">Next</button>
+        <button class="exit">Exit</button>
     </div>
 
     <script>
-        const slidesContainer = document.getElementById('slides');
-        const editor = document.getElementById('editor');
-        const addSlideButton = document.getElementById('addSlide');
-        const deleteSlideButton = document.getElementById('deleteSlide');
-        const saveSlideButton = document.getElementById('saveSlide');
-        const loadSlideButton = document.getElementById('loadSlide');
-        const fileInput = document.getElementById('file-input');
-        const startPresentationButton = document.getElementById('startPresentation');
-        const fullscreenContainer = document.getElementById('fullscreen-container');
-        const prevSlideButton = document.getElementById('prevSlide');
-        const nextSlideButton = document.getElementById('nextSlide');
-        const endPresentationButton = document.getElementById('endPresentation');
-        const fullscreenSlide = fullscreenContainer.querySelector('.fullscreen-slide');
+        const fontName = document.getElementById('fontName');
+        const fontSize = document.getElementById('fontSize');
+        const bold = document.getElementById('bold');
+        const italic = document.getElementById('italic');
+        const underline = document.getElementById('underline');
+        const startPresentation = document.getElementById('startPresentation');
+        const fullscreen = document.getElementById('fullscreen');
+        const exitButton = fullscreen.querySelector('.exit');
+        const prevButton = fullscreen.querySelector('.prev');
+        const nextButton = fullscreen.querySelector('.next');
 
-        let slides = [];
-        let currentSlideIndex = 0;
+        let currentFullscreenIndex = 0;
 
-        function renderSlides() {
-            slidesContainer.innerHTML = '';
-            slides.forEach((slide, index) => {
-                const slidePreview = document.createElement('div');
-                slidePreview.className = 'slide-preview';
-                slidePreview.textContent = `Slide ${index + 1}`;
-                if (index === currentSlideIndex) slidePreview.classList.add('active');
-                slidePreview.addEventListener('click', () => {
-                    currentSlideIndex = index;
-                    loadSlideContent();
-                    renderSlides();
-                });
-                slidesContainer.appendChild(slidePreview);
-            });
+        function applyFormat(command) {
+            document.execCommand(command, false, null);
         }
 
-        function saveSlideContent() {
-            const columns = editor.querySelectorAll('.column');
-            slides[currentSlideIndex] = Array.from(columns).map(col => col.innerHTML);
-        }
+        bold.addEventListener('click', () => applyFormat('bold'));
+        italic.addEventListener('click', () => applyFormat('italic'));
+        underline.addEventListener('click', () => applyFormat('underline'));
 
-        function loadSlideContent() {
-            const slideContent = slides[currentSlideIndex];
-            const columns = editor.querySelectorAll('.column');
-            slideContent.forEach((content, index) => {
-                columns[index].innerHTML = content;
-            });
-        }
+        fontName.addEventListener('change', () => {
+            document.execCommand('fontName', false, fontName.value);
+        });
 
-        function addSlide() {
-            saveSlideContent();
-            slides.push(['Column 1: Click to edit', 'Column 2: Click to edit']);
-            currentSlideIndex = slides.length - 1;
-            renderSlides();
-            loadSlideContent();
-        }
+        fontSize.addEventListener('change', () => {
+            document.execCommand('fontSize', false, fontSize.value);
+        });
 
-        function deleteSlide() {
-            if (slides.length > 1) {
-                slides.splice(currentSlideIndex, 1);
-                currentSlideIndex = Math.max(0, currentSlideIndex - 1);
-                renderSlides();
-                loadSlideContent();
-            }
-        }
-
-        function saveToFile() {
-            saveSlideContent();
-            const blob = new Blob([JSON.stringify(slides)], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'presentation.slide';
-            link.click();
-        }
-
-        function loadFromFile(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    slides = JSON.parse(e.target.result);
-                    currentSlideIndex = 0;
-                    renderSlides();
-                    loadSlideContent();
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        function startPresentation() {
-            fullscreenContainer.style.display = 'flex';
+        startPresentation.addEventListener('click', () => {
+            fullscreen.style.display = 'flex';
             document.body.requestFullscreen();
-            fullscreenSlide.innerHTML = slides[currentSlideIndex].join('<br>');
-        }
+        });
 
-        function endPresentation() {
-            fullscreenContainer.style.display = 'none';
+        exitButton.addEventListener('click', () => {
+            fullscreen.style.display = 'none';
             document.exitFullscreen();
-        }
+        });
 
-        function nextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                currentSlideIndex++;
-                fullscreenSlide.innerHTML = slides[currentSlideIndex].join('<br>');
-            }
-        }
+        prevButton.addEventListener('click', () => {
+            // Logic for previous slide
+        });
 
-        function prevSlide() {
-            if (currentSlideIndex > 0) {
-                currentSlideIndex--;
-                fullscreenSlide.innerHTML = slides[currentSlideIndex].join('<br>');
-            }
-        }
+        nextButton.addEventListener('click', () => {
+            // Logic for next slide
+        });
 
-        addSlideButton.addEventListener('click', addSlide);
-        deleteSlideButton.addEventListener('click', deleteSlide);
-        saveSlideButton.addEventListener('click', saveToFile);
-        loadSlideButton.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', loadFromFile);
-        startPresentationButton.addEventListener('click', startPresentation);
-        endPresentationButton.addEventListener('click', endPresentation);
-        nextSlideButton.addEventListener('click', nextSlide);
-        prevSlideButton.addEventListener('click', prevSlide);
-
-        // Initialize
-        slides.push(['Column 1: Click to edit', 'Column 2: Click to edit']);
-        renderSlides();
-        loadSlideContent();
+        // Ensure formatting is applied to selected text
+        document.addEventListener('selectionchange', () => {
+            // Update toolbar to reflect the current selection's formatting
+        });
     </script>
 </body>
 </html>

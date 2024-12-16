@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slides 2025 - Online</title>
+    <title>Online PowerPoint Alternative</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,14 +14,13 @@
             background-color: #f3f3f3;
             padding: 10px;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #ccc;
+            gap: 10px;
         }
-        #toolbar button, #toolbar input {
-            margin-right: 10px;
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
+        #toolbar select, #toolbar button, #toolbar input {
+            padding: 5px;
+            font-size: 14px;
         }
         #workspace {
             display: flex;
@@ -73,64 +72,62 @@
         .column[contenteditable="true"] {
             outline: none;
         }
-        #file-input {
-            display: none;
-        }
         #fullscreen-container {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             background-color: black;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            color: white;
             z-index: 1000;
         }
-        #fullscreen-container .slide {
-            width: 90%;
-            height: 80%;
+        .fullscreen-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
             background-color: white;
+        }
+        #fullscreen-container button {
+            position: absolute;
+            top: 10px;
+            background-color: #0078d7;
             border: none;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        }
-        #fullscreen-toolbar {
-            position: absolute;
-            top: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 30px;
-        }
-        #fullscreen-toolbar button {
-            padding: 10px 20px;
-            font-size: 18px;
+            color: white;
+            padding: 10px;
             cursor: pointer;
         }
-        #fullscreen-controls {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 30px;
+        #prevSlide {
+            left: 10px;
         }
-        #fullscreen-controls button {
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
+        #nextSlide {
+            right: 10px;
+        }
+        #endPresentation {
+            top: 10px;
+            right: 50%;
         }
     </style>
 </head>
 <body>
     <div id="toolbar">
+        <select id="fontName">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+        </select>
+        <input type="number" id="fontSize" min="8" max="72" value="16">
+        <button id="bold">B</button>
+        <button id="italic">I</button>
+        <button id="underline">U</button>
+        <button id="startPresentation">Start Presentation</button>
         <button id="addSlide">Add Slide</button>
         <button id="deleteSlide">Delete Slide</button>
         <button id="saveSlide">Save .SLIDE</button>
         <button id="loadSlide">Load .SLIDE</button>
-        <button id="startPresentation">Start Presentation</button>
         <input type="file" id="file-input" accept=".slide">
     </div>
     <div id="workspace">
@@ -144,14 +141,10 @@
     </div>
 
     <div id="fullscreen-container">
-        <div id="fullscreen-toolbar">
-            <button id="endPresentation">End Presentation</button>
-        </div>
-        <div class="slide"></div>
-        <div id="fullscreen-controls">
-            <button id="prevSlide">Previous</button>
-            <button id="nextSlide">Next</button>
-        </div>
+        <button id="prevSlide">Previous</button>
+        <button id="nextSlide">Next</button>
+        <button id="endPresentation">End Presentation</button>
+        <div class="fullscreen-slide"></div>
     </div>
 
     <script>
@@ -161,13 +154,13 @@
         const deleteSlideButton = document.getElementById('deleteSlide');
         const saveSlideButton = document.getElementById('saveSlide');
         const loadSlideButton = document.getElementById('loadSlide');
+        const fileInput = document.getElementById('file-input');
         const startPresentationButton = document.getElementById('startPresentation');
-        const endPresentationButton = document.getElementById('endPresentation');
+        const fullscreenContainer = document.getElementById('fullscreen-container');
         const prevSlideButton = document.getElementById('prevSlide');
         const nextSlideButton = document.getElementById('nextSlide');
-        const fileInput = document.getElementById('file-input');
-        const fullscreenContainer = document.getElementById('fullscreen-container');
-        const fullscreenSlide = fullscreenContainer.querySelector('.slide');
+        const endPresentationButton = document.getElementById('endPresentation');
+        const fullscreenSlide = fullscreenContainer.querySelector('.fullscreen-slide');
 
         let slides = [];
         let currentSlideIndex = 0;
@@ -243,38 +236,28 @@
 
         function startPresentation() {
             fullscreenContainer.style.display = 'flex';
-            document.addEventListener('keydown', handleKeydown);
-            loadFullscreenSlide();
+            document.body.requestFullscreen();
+            fullscreenSlide.innerHTML = slides[currentSlideIndex].join('<br>');
         }
 
         function endPresentation() {
             fullscreenContainer.style.display = 'none';
-            document.removeEventListener('keydown', handleKeydown);
+            document.exitFullscreen();
         }
 
-        function loadFullscreenSlide() {
-            fullscreenSlide.innerHTML = slides[currentSlideIndex].map(content => `<div class="column">${content}</div>`).join('');
-        }
-
-        function handleKeydown(event) {
-            if (event.key === 'Escape') {
-                endPresentation();
-            }
-        }
-
-        prevSlideButton.addEventListener('click', () => {
-            if (currentSlideIndex > 0) {
-                currentSlideIndex--;
-                loadFullscreenSlide();
-            }
-        });
-
-        nextSlideButton.addEventListener('click', () => {
+        function nextSlide() {
             if (currentSlideIndex < slides.length - 1) {
                 currentSlideIndex++;
-                loadFullscreenSlide();
+                fullscreenSlide.innerHTML = slides[currentSlideIndex].join('<br>');
             }
-        });
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                fullscreenSlide.innerHTML = slides[currentSlideIndex].join('<br>');
+            }
+        }
 
         addSlideButton.addEventListener('click', addSlide);
         deleteSlideButton.addEventListener('click', deleteSlide);
@@ -283,8 +266,13 @@
         fileInput.addEventListener('change', loadFromFile);
         startPresentationButton.addEventListener('click', startPresentation);
         endPresentationButton.addEventListener('click', endPresentation);
+        nextSlideButton.addEventListener('click', nextSlide);
+        prevSlideButton.addEventListener('click', prevSlide);
 
-        addSlide();
+        // Initialize
+        slides.push(['Column 1: Click to edit', 'Column 2: Click to edit']);
+        renderSlides();
+        loadSlideContent();
     </script>
 </body>
 </html>

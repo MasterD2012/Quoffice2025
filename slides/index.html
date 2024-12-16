@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online PowerPoint Alternative</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+        #toolbar {
+            background-color: #f3f3f3;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ccc;
+        }
+        #toolbar button, #toolbar input {
+            margin-right: 10px;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #workspace {
+            display: flex;
+            height: calc(100vh - 60px);
+            background-color: #eaeaea;
+        }
+        #slides {
+            width: 20%;
+            background-color: #fff;
+            border-right: 1px solid #ccc;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .slide-preview {
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+        .slide-preview.active {
+            border-color: #0078d7;
+        }
+        #editor {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+        }
+        .slide {
+            width: 80%;
+            height: 80%;
+            border: 2px solid #ccc;
+            display: flex;
+            flex-direction: row;
+            background-color: white;
+            position: relative;
+        }
+        .column {
+            flex: 1;
+            padding: 10px;
+            border-right: 1px solid #eee;
+            overflow: auto;
+        }
+        .column:last-child {
+            border-right: none;
+        }
+        .column[contenteditable="true"] {
+            outline: none;
+        }
+        #file-input {
+            display: none;
+        }
+        #fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #fullscreen-container .slide {
+            width: 90%;
+            height: 80%;
+            background-color: white;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        #fullscreen-toolbar {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+        #fullscreen-toolbar button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        #fullscreen-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+        #fullscreen-controls button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <button id="addSlide">Add Slide</button>
+        <button id="deleteSlide">Delete Slide</button>
+        <button id="saveSlide">Save .SLIDE</button>
+        <button id="loadSlide">Load .SLIDE</button>
+        <button id="startPresentation">Start Presentation</button>
+        <input type="file" id="file-input" accept=".slide">
+    </div>
+    <div id="workspace">
+        <div id="slides"></div>
+        <div id="editor">
+            <div class="slide">
+                <div class="column" contenteditable="true">Column 1: Click to edit</div>
+                <div class="column" contenteditable="true">Column 2: Click to edit</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullscreen-container">
+        <div id="fullscreen-toolbar">
+            <button id="endPresentation">End Presentation</button>
+        </div>
+        <div class="slide"></div>
+        <div id="fullscreen-controls">
+            <button id="prevSlide">Previous</button>
+            <button id="nextSlide">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const slidesContainer = document.getElementById('slides');
+        const editor = document.getElementById('editor');
+        const addSlideButton = document.getElementById('addSlide');
+        const deleteSlideButton = document.getElementById('deleteSlide');
+        const saveSlideButton = document.getElementById('saveSlide');
+        const loadSlideButton = document.getElementById('loadSlide');
+        const startPresentationButton = document.getElementById('startPresentation');
+        const endPresentationButton = document.getElementById('endPresentation');
+        const prevSlideButton = document.getElementById('prevSlide');
+        const nextSlideButton = document.getElementById('nextSlide');
+        const fileInput = document.getElementById('file-input');
+        const fullscreenContainer = document.getElementById('fullscreen-container');
+        const fullscreenSlide = fullscreenContainer.querySelector('.slide');
+
+        let slides = [];
+        let currentSlideIndex = 0;
+
+        function renderSlides() {
+            slidesContainer.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const slidePreview = document.createElement('div');
+                slidePreview.className = 'slide-preview';
+                slidePreview.textContent = `Slide ${index + 1}`;
+                if (index === currentSlideIndex) slidePreview.classList.add('active');
+                slidePreview.addEventListener('click', () => {
+                    currentSlideIndex = index;
+                    loadSlideContent();
+                    renderSlides();
+                });
+                slidesContainer.appendChild(slidePreview);
+            });
+        }
+
+        function saveSlideContent() {
+            const columns = editor.querySelectorAll('.column');
+            slides[currentSlideIndex] = Array.from(columns).map(col => col.innerHTML);
+        }
+
+        function loadSlideContent() {
+            const slideContent = slides[currentSlideIndex];
+            const columns = editor.querySelectorAll('.column');
+            slideContent.forEach((content, index) => {
+                columns[index].innerHTML = content;
+            });
+        }
+
+        function addSlide() {
+            saveSlideContent();
+            slides.push(['Column 1: Click to edit', 'Column 2: Click to edit']);
+            currentSlideIndex = slides.length - 1;
+            renderSlides();
+            loadSlideContent();
+        }
+
+        function deleteSlide() {
+            if (slides.length > 1) {
+                slides.splice(currentSlideIndex, 1);
+                currentSlideIndex = Math.max(0, currentSlideIndex - 1);
+                renderSlides();
+                loadSlideContent();
+            }
+        }
+
+        function saveToFile() {
+            saveSlideContent();
+            const blob = new Blob([JSON.stringify(slides)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'presentation.slide';
+            link.click();
+        }
+
+        function loadFromFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    slides = JSON.parse(e.target.result);
+                    currentSlideIndex = 0;
+                    renderSlides();
+                    loadSlideContent();
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function startPresentation() {
+            fullscreenContainer.style.display = 'flex';
+            document.addEventListener('keydown', handleKeydown);
+            loadFullscreenSlide();
+        }
+
+        function endPresentation() {
+            fullscreenContainer.style.display = 'none';
+            document.removeEventListener('keydown', handleKeydown);
+        }
+
+        function loadFullscreenSlide() {
+            fullscreenSlide.innerHTML = slides[currentSlideIndex].map(content => `<div class="column">${content}</div>`).join('');
+        }
+
+        function handleKeydown(event) {
+            if (event.key === 'Escape') {
+                endPresentation();
+            }
+        }
+
+        prevSlideButton.addEventListener('click', () => {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                loadFullscreenSlide();
+            }
+        });
+
+        nextSlideButton.addEventListener('click', () => {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                loadFullscreenSlide();
+            }
+        });
+
+        addSlideButton.addEventListener('click', addSlide);
+        deleteSlideButton.addEventListener('click', deleteSlide);
+        saveSlideButton.addEventListener('click', saveToFile);
+        loadSlideButton.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', loadFromFile);
+        startPresentationButton.addEventListener('click', startPresentation);
+        endPresentationButton.addEventListener('click', endPresentation);
+
+        addSlide();
+    </script>
+</body>
+</html>

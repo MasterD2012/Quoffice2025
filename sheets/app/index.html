@@ -10,20 +10,24 @@
             text-align: center;
             background-color: #f3f3f3;
         }
-        #toolbar {
-            background: #0078D7;
+        #ribbon {
+            background: #217346;
             color: white;
             padding: 10px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
         }
-        button {
+        .ribbon-section {
+            display: flex;
+            gap: 10px;
+        }
+        button, select {
             padding: 5px 10px;
             border: none;
             background: white;
             cursor: pointer;
         }
-        button:hover {
+        button:hover, select:hover {
             background: lightgray;
         }
         table {
@@ -50,9 +54,19 @@
     </style>
 </head>
 <body>
-    <div id="toolbar">
-        <button onclick="saveSheet()">Save</button>
-        <button onclick="loadSheet()">Load</button>
+    <div id="ribbon">
+        <div class="ribbon-section">
+            <button onclick="saveSheet()">Save</button>
+            <button onclick="loadSheet()">Load</button>
+        </div>
+        <div class="ribbon-section">
+            <select id="font-selector" onchange="changeFont(this.value)">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+        </div>
     </div>
     <h1>Sheets - Web Spreadsheet</h1>
     <table id="spreadsheet">
@@ -72,7 +86,7 @@
                     document.write('<tr>');
                     document.write(`<th>${i}</th>`);
                     for (let j = 0; j < 10; j++) {
-                        document.write('<td><input type="text"></td>');
+                        document.write('<td><input type="text" oninput="trackChanges()"></td>');
                     }
                     document.write('</tr>');
                 }
@@ -81,6 +95,19 @@
     </table>
 
     <script>
+        let changesMade = false;
+        
+        function trackChanges() {
+            changesMade = true;
+        }
+        
+        window.addEventListener('beforeunload', function (e) {
+            if (changesMade) {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? There are unsaved changes.';
+            }
+        });
+        
         function saveSheet() {
             let data = "APP = quoffice\nAVer = 2025\nCompatab = ok\n\nfile:\n";
             let rows = document.querySelectorAll("tbody tr");
@@ -99,6 +126,8 @@
             link.href = URL.createObjectURL(blob);
             link.download = 'SheetFile.SHEET';
             link.click();
+            
+            changesMade = false;
         }
         
         function loadSheet() {
@@ -130,6 +159,12 @@
                 }
             });
             input.click();
+        }
+        
+        function changeFont(font) {
+            document.querySelectorAll("td input").forEach(cell => {
+                cell.style.fontFamily = font;
+            });
         }
     </script>
 </body>

@@ -8,27 +8,52 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #f3f3f3;
+        }
+        #toolbar {
+            background: #0078D7;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        button {
+            padding: 5px 10px;
+            border: none;
+            background: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: lightgray;
         }
         table {
             border-collapse: collapse;
             width: 90%;
             margin: 20px auto;
+            background: white;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
         }
         th, td {
-            border: 1px solid black;
+            border: 1px solid #ccc;
             width: 80px;
             height: 30px;
             text-align: center;
+            position: relative;
         }
         input {
             width: 100%;
             height: 100%;
             border: none;
             text-align: center;
+            background: transparent;
         }
     </style>
 </head>
 <body>
+    <div id="toolbar">
+        <button onclick="saveSheet()">Save</button>
+        <button onclick="loadSheet()">Load</button>
+    </div>
     <h1>Sheets - Web Spreadsheet</h1>
     <table id="spreadsheet">
         <thead>
@@ -54,5 +79,58 @@
             </script>
         </tbody>
     </table>
+
+    <script>
+        function saveSheet() {
+            let data = "APP = quoffice\nAVer = 2025\nCompatab = ok\n\nfile:\n";
+            let rows = document.querySelectorAll("tbody tr");
+            
+            rows.forEach((row, rowIndex) => {
+                let cells = row.querySelectorAll("td input");
+                cells.forEach((cell, colIndex) => {
+                    let colLetter = String.fromCharCode(65 + colIndex);
+                    let cellId = colLetter + (rowIndex + 1).toString().padStart(2, '0');
+                    data += `${cellId}: ${cell.value}\n`;
+                });
+            });
+            
+            let blob = new Blob([data], { type: 'text/plain' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'SheetFile.SHEET';
+            link.click();
+        }
+        
+        function loadSheet() {
+            let input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.SHEET';
+            input.addEventListener('change', function() {
+                let file = input.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let content = e.target.result.split('\n');
+                        let rows = document.querySelectorAll("tbody tr");
+                        
+                        content.forEach(line => {
+                            if (line.includes(":")) {
+                                let [cellId, value] = line.split(":").map(s => s.trim());
+                                let colLetter = cellId.charAt(0);
+                                let rowNumber = parseInt(cellId.substring(1)) - 1;
+                                let colIndex = colLetter.charCodeAt(0) - 65;
+                                
+                                if (rowNumber >= 0 && rowNumber < rows.length && colIndex >= 0 && colIndex < 10) {
+                                    rows[rowNumber].querySelectorAll("td input")[colIndex].value = value;
+                                }
+                            }
+                        });
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            input.click();
+        }
+    </script>
 </body>
 </html>

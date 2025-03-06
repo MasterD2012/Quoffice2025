@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheets - Web Spreadsheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            width: 80px;
+            height: 30px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sheets - Web Spreadsheet</h1>
+    <table id="spreadsheet">
+        <thead>
+            <tr>
+                <th></th>
+                <script>
+                    for (let i = 0; i < 10; i++) {
+                        document.write(`<th>${String.fromCharCode(65 + i)}</th>`);
+                    }
+                </script>
+            </tr>
+        </thead>
+        <tbody>
+            <script>
+                for (let i = 1; i <= 20; i++) {
+                    document.write('<tr>');
+                    document.write(`<th>${i}</th>`);
+                    for (let j = 0; j < 10; j++) {
+                        document.write('<td><input type="text"></td>');
+                    }
+                    document.write('</tr>');
+                }
+            </script>
+        </tbody>
+    </table>
+</body>
+</html>

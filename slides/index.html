@@ -75,6 +75,41 @@
             padding: 10px;
             overflow: auto;
         }
+        #presentation-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        #presentation-slide {
+            width: 80%;
+            height: 80%;
+            background: white;
+            padding: 10px;
+            border: 2px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #presentation-controls {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            color: white;
+            display: none;
+        }
+        #presentation-view:hover #presentation-controls {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -89,24 +124,7 @@
     <div id="tab-contents">
         <div class="tab-content active" id="home">
             <button onclick="addSlide()">Add Slide</button>
-            <select id="fontSelect" onchange="changeFont(this.value)">
-                <option value="Arial">Arial</option>
-                <option value="Verdana">Verdana</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Courier New">Courier New</option>
-            </select>
-        </div>
-        <div class="tab-content" id="design">
-            <button onclick="setTheme('light')">Light Theme</button>
-            <button onclick="setTheme('dark')">Dark Theme</button>
-        </div>
-        <div class="tab-content" id="transitions">
-            <button onclick="setTransition('fade')">Fade</button>
-            <button onclick="setTransition('slide')">Slide In</button>
-        </div>
-        <div class="tab-content" id="file">
-            <button onclick="openPresentation()">Open</button>
-            <button onclick="savePresentation()">Save</button>
+            <button onclick="startPresentation()">Present</button>
         </div>
     </div>
     <div style="display: flex; height: 100%;">
@@ -115,91 +133,48 @@
             <div id="slide" contenteditable="true"></div>
         </div>
     </div>
+    <div id="presentation-view" onclick="exitPresentation()">
+        <div id="presentation-slide"></div>
+        <div id="presentation-controls">
+            <button onclick="prevSlide(event)">Previous</button>
+            <span id="slide-number">1</span>
+            <button onclick="nextSlide(event)">Next</button>
+            <button onclick="exitPresentation()">Exit</button>
+        </div>
+    </div>
     <script>
         let slides = [""];
         let currentSlide = 0;
 
-        function switchTab(event, tabName) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
+        function startPresentation() {
+            document.getElementById('presentation-view').style.display = 'flex';
+            updatePresentationSlide();
         }
 
-        function renderThumbnails() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.innerHTML = '';
-            slides.forEach((content, index) => {
-                const thumbnail = document.createElement('div');
-                thumbnail.className = 'slide-thumbnail' + (index === currentSlide ? ' selected' : '');
-                thumbnail.innerHTML = content;
-                thumbnail.onclick = () => switchSlide(index);
-                sidebar.appendChild(thumbnail);
-            });
+        function exitPresentation() {
+            document.getElementById('presentation-view').style.display = 'none';
         }
 
-        function addSlide() {
-            slides[currentSlide] = document.getElementById('slide').innerHTML;
-            slides.push("");
-            currentSlide = slides.length - 1;
-            updateSlide();
-            renderThumbnails();
+        function nextSlide(event) {
+            event.stopPropagation();
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updatePresentationSlide();
+            }
         }
 
-        function switchSlide(index) {
-            slides[currentSlide] = document.getElementById('slide').innerHTML;
-            currentSlide = index;
-            updateSlide();
-            renderThumbnails();
+        function prevSlide(event) {
+            event.stopPropagation();
+            if (currentSlide > 0) {
+                currentSlide--;
+                updatePresentationSlide();
+            }
         }
 
-        function updateSlide() {
-            document.getElementById('slide').innerHTML = slides[currentSlide];
+        function updatePresentationSlide() {
+            document.getElementById('presentation-slide').innerHTML = slides[currentSlide];
+            document.getElementById('slide-number').innerText = (currentSlide + 1);
         }
-
-        function changeFont(font) {
-            document.getElementById('slide').style.fontFamily = font;
-        }
-
-        function setTheme(theme) {
-            document.getElementById('slide').style.background = theme === 'dark' ? '#333' : 'white';
-            document.getElementById('slide').style.color = theme === 'dark' ? 'white' : 'black';
-        }
-
-        function setTransition(type) {
-            document.getElementById('slide').style.transition = type === 'fade' ? 'opacity 1s' : 'transform 1s';
-        }
-
-        function savePresentation() {
-            const blob = new Blob([JSON.stringify(slides)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'presentation.SLIDE2';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function openPresentation() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.SLIDE2';
-            input.onchange = event => {
-                const file = event.target.files[0];
-                const reader = new FileReader();
-                reader.onload = e => {
-                    slides = JSON.parse(e.target.result);
-                    currentSlide = 0;
-                    updateSlide();
-                    renderThumbnails();
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
-        renderThumbnails();
-        updateSlide();
     </script>
 </body>
 </html>

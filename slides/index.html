@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>PowerPoint Clone</title>
   <!-- Add your icon file here -->
-  <link rel="icon" href="icon.png">
+  <link rel="icon" href="quoffice_icon.ico">
   <style>
     body {
       margin: 0;
@@ -94,7 +94,7 @@
       padding: 10px;
       overflow: auto;
     }
-    /* Presentation View */
+    /* Fullscreen Presentation View */
     #presentation-view {
       position: fixed;
       top: 0;
@@ -103,31 +103,40 @@
       height: 100%;
       background: black;
       display: none;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
     }
+    /* The presentation slide fills the screen and has larger font */
     #presentation-slide {
-      width: 80%;
-      height: 80%;
-      background: white;
-      padding: 10px;
-      border: 2px solid black;
-      box-sizing: border-box;
-    }
-    #presentation-controls {
-      position: absolute;
-      bottom: 0;
       width: 100%;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: space-around;
+      height: 100%;
+      background: white;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 2em; /* Larger text */
+      overflow: auto;
+      display: flex;
+      justify-content: center;
       align-items: center;
+    }
+    /* Hover-activated control panel at the bottom-left */
+    #presentation-controls {
+      position: fixed;
+      left: 10px;
+      bottom: 10px;
+      background: rgba(0, 0, 0, 0.7);
       padding: 10px;
       color: white;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
     #presentation-view:hover #presentation-controls {
-      display: flex;
+      opacity: 1;
     }
   </style>
 </head>

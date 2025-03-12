@@ -4,46 +4,73 @@
   <meta charset="UTF-8">
   <title>Quoffice Launcher</title>
   <style>
+    /* Overall page styling */
     body {
-      background-color: #282c34;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-      text-align: center;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
+    /* Header styling */
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      font-size: 2.5em;
+      font-weight: bold;
+    }
+    /* Container for launcher buttons */
     .container {
-      margin: 50px auto;
-      max-width: 600px;
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
-    h1 {
-      margin-bottom: 30px;
-    }
-    .app-button {
-      display: inline-block;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 18px;
-      color: #fff;
-      background-color: #61dafb;
+    /* Styling for each launcher button */
+    .launcher-button {
+      background: rgba(255, 255, 255, 0.2);
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      border-radius: 10px;
+      padding: 20px 40px;
+      margin: 15px;
+      font-size: 1.2em;
       text-decoration: none;
-      transition: background-color 0.3s ease;
+      color: #fff;
+      transition: background 0.3s ease, transform 0.3s ease;
     }
-    .app-button:hover {
-      background-color: #21a1f1;
+    .launcher-button:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: translateY(-5px);
+    }
+    /* Fixed tip of the day footer */
+    .tip-container {
+      background: rgba(0, 0, 0, 0.3);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding: 15px;
+      text-align: center;
+      font-size: 1em;
     }
   </style>
 </head>
 <body>
+  <!-- Header -->
+  <div class="header">Quoffice Launcher</div>
+  
+  <!-- Launcher Buttons -->
   <div class="container">
-    <h1>Quoffice Launcher</h1>
-    <!-- Replace the href URLs with the actual paths of your applications -->
-    <a href="https://masterd2012.github.io/Quoffice2025/app1.html" target="_blank" class="app-button">Application 1</a>
-    <a href="https://masterd2012.github.io/Quoffice2025/app2.html" target="_blank" class="app-button">Application 2</a>
-    <a href="https://masterd2012.github.io/Quoffice2025/app3.html" target="_blank" class="app-button">Application 3</a>
+    <!-- Update these href values to the actual paths of your applications -->
+    <a href="https://masterd2012.github.io/Quoffice2025/app1.html" target="_blank" class="launcher-button">Application 1</a>
+    <a href="https://masterd2012.github.io/Quoffice2025/app2.html" target="_blank" class="launcher-button">Application 2</a>
+    <a href="https://masterd2012.github.io/Quoffice2025/app3.html" target="_blank" class="launcher-button">Application 3</a>
+  </div>
+  
+  <!-- Tip of the Day -->
+  <div class="tip-container">
+    Tip of the Day: Stay organized and keep your workflow smooth!
   </div>
 </body>
 </html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Edit Note</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    input, select, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .toolbar button {
+      margin-right: 5px;
+    }
+    #editor {
+      min-height: 300px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Edit Note</h2>
+  <input type="text" id="noteTitle" placeholder="Note Title">
+  <select id="noteCategory">
+    <option value="work">Work</option>
+    <option value="personal">Personal</option>
+    <option value="ideas">Ideas</option>
+  </select>
+  <input type="color" id="noteColor" value="#ffffff">
+  <div class="toolbar">
+    <button onclick="execCmd('bold')">Bold</button>
+    <button onclick="execCmd('italic')">Italic</button>
+    <button onclick="execCmd('underline')">Underline</button>
+  </div>
+  <div id="editor" contenteditable="true"></div>
+  <button onclick="saveNote()">Save Note</button>
+
+  <script>
+    // Retrieve the note id from the URL parameters
+    let noteId = new URLSearchParams(window.location.search).get('id');
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    let currentNote = notes.find(n => n.id == noteId);
+    
+    const titleInput = document.getElementById('noteTitle');
+    const categorySelect = document.getElementById('noteCategory');
+    const colorInput = document.getElementById('noteColor');
+    const editor = document.getElementById('editor');
+
+    // Load the note data if it exists
+    if (currentNote) {
+      titleInput.value = currentNote.title;
+      categorySelect.value = currentNote.category;
+      colorInput.value = currentNote.color;
+      editor.innerHTML = currentNote.content;
+      document.body.style.backgroundColor = currentNote.color;
+    }
+
+    // Function to execute rich text commands
+    function execCmd(command) {
+      document.execCommand(command, false, null);
+    }
+
+    // Save the note changes
+    function saveNote() {
+      currentNote.title = titleInput.value;
+      currentNote.category = categorySelect.value;
+      currentNote.color = colorInput.value;
+      currentNote.content = editor.innerHTML;
+      localStorage.setItem('notes', JSON.stringify(notes));
+      alert('Note saved!');
+    }
+
+    // Optional: Auto-save the note every 30 seconds
+    setInterval(saveNote, 30000);
+  </script>
+</body>
+</html>

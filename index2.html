@@ -4,86 +4,257 @@
   <meta charset="UTF-8">
   <title>Quoffice Launcher</title>
   <style>
-    /* Full-page gradient background */
-    body {
+    /* Basic reset */
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    }
+    body, html {
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
-      color: #ffffff;
     }
-    /* Central glassmorphism container */
-    .launcher-container {
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 15px;
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      padding: 40px;
-      width: 90%;
-      max-width: 600px;
-      text-align: center;
-    }
-    /* Header styling */
-    .launcher-header {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-    /* Application buttons container */
-    .buttons {
+    /* Layout using flexbox */
+    .wrapper {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 30px;
+      height: 100%;
     }
-    /* Individual app buttons */
-    .app-button {
-      background: rgba(255, 255, 255, 0.2);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 10px;
-      padding: 15px 25px;
-      font-size: 1.1em;
-      text-decoration: none;
+    /* Sidebar styling */
+    .sidebar {
+      width: 200px;
+      background: #323232;
       color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+    .sidebar a {
+      color: #fff;
+      text-decoration: none;
+      padding: 15px 20px;
+      display: block;
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background: #444;
+    }
+    /* Main content area */
+    .content {
+      flex: 1;
+      background: #f3f3f3;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .header {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    /* Grid of application buttons */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .app-button {
+      background: #0078d7;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
       transition: background 0.3s, transform 0.3s;
+      display: block;
     }
     .app-button:hover {
-      background: rgba(255, 255, 255, 0.4);
+      background: #005a9e;
       transform: translateY(-3px);
     }
-    /* Tip of the Day section */
-    .tip-section {
-      border-top: 1px solid rgba(255, 255, 255, 0.3);
-      padding-top: 15px;
-      font-size: 1em;
-      margin-top: 20px;
+    /* Edit Mode Panel */
+    .edit-panel {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: none;
     }
-    .tip-section span.source {
-      font-style: italic;
+    .edit-panel h2 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .edit-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .edit-item:last-child {
+      border-bottom: none;
+    }
+    .edit-item label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    .edit-item input {
+      padding: 8px;
+      width: 100%;
+      margin-bottom: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .reorder-buttons button {
+      padding: 5px 10px;
+      margin-right: 5px;
       font-size: 0.9em;
-      color: #dcdcdc;
+    }
+    .edit-toggle {
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      background: #0078d7;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .edit-toggle:hover {
+      background: #005a9e;
+    }
+    .save-edit {
+      background: #28a745;
+      border: none;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .save-edit:hover {
+      background: #218838;
     }
   </style>
 </head>
 <body>
-  <div class="launcher-container">
-    <div class="launcher-header">Quoffice Launcher</div>
-    <div class="buttons">
-      <!-- Replace these URLs with your actual application paths -->
-      <a href="https://masterd2012.github.io/Quoffice2025/app1.html" target="_blank" class="app-button">Application 1</a>
-      <a href="https://masterd2012.github.io/Quoffice2025/app2.html" target="_blank" class="app-button">Application 2</a>
-      <a href="https://masterd2012.github.io/Quoffice2025/app3.html" target="_blank" class="app-button">Application 3</a>
+  <div class="wrapper">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+      <a href="#" onclick="navigate('home')">Home</a>
+      <a href="#" onclick="navigate('myapps')">My Apps</a>
     </div>
-    <div class="tip-section">
-      Tip of the Day: <strong>Stay organized for better productivity!</strong><br>
-      <span class="source">Source: Quoffice Online</span>
+    
+    <!-- Main Content Area -->
+    <div class="content">
+      <div class="header">Quoffice Launcher</div>
+      <!-- Edit Mode Toggle -->
+      <button class="edit-toggle" onclick="toggleEditMode()">Toggle Edit Mode</button>
+      
+      <!-- Application Grid -->
+      <div id="appGrid" class="app-grid">
+        <!-- App buttons are populated here -->
+      </div>
+      
+      <!-- Edit Panel -->
+      <div id="editPanel" class="edit-panel">
+        <h2>Edit Menus</h2>
+        <div id="editItems">
+          <!-- Edit items are dynamically inserted here -->
+        </div>
+        <button class="save-edit" onclick="saveEdits()">Save Changes</button>
+      </div>
     </div>
   </div>
+  
+  <script>
+    // Sample data for apps (can be customized or dynamically loaded)
+    let apps = [
+      { label: "Application 1", url: "https://masterd2012.github.io/Quoffice2025/app1.html" },
+      { label: "Application 2", url: "https://masterd2012.github.io/Quoffice2025/app2.html" },
+      { label: "Application 3", url: "https://masterd2012.github.io/Quoffice2025/app3.html" }
+    ];
+    
+    const appGrid = document.getElementById('appGrid');
+    const editPanel = document.getElementById('editPanel');
+    const editItems = document.getElementById('editItems');
+    let editMode = false;
+    
+    // Render the app buttons in the grid
+    function renderApps() {
+      appGrid.innerHTML = "";
+      apps.forEach((app, index) => {
+        const a = document.createElement('a');
+        a.href = app.url;
+        a.target = "_blank";
+        a.className = "app-button";
+        a.textContent = app.label;
+        appGrid.appendChild(a);
+      });
+    }
+    
+    // Render the edit panel fields
+    function renderEditPanel() {
+      editItems.innerHTML = "";
+      apps.forEach((app, index) => {
+        const div = document.createElement('div');
+        div.className = "edit-item";
+        div.innerHTML = `
+          <label>App ${index + 1}</label>
+          <input type="text" id="label-${index}" value="${app.label}" placeholder="Label">
+          <input type="text" id="url-${index}" value="${app.url}" placeholder="URL">
+          <div class="reorder-buttons">
+            <button onclick="moveUp(${index})">Up</button>
+            <button onclick="moveDown(${index})">Down</button>
+          </div>
+        `;
+        editItems.appendChild(div);
+      });
+    }
+    
+    // Toggle Edit Mode display
+    function toggleEditMode() {
+      editMode = !editMode;
+      editPanel.style.display = editMode ? "block" : "none";
+      if (editMode) {
+        renderEditPanel();
+      }
+    }
+    
+    // Save changes from edit panel
+    function saveEdits() {
+      apps = apps.map((app, index) => {
+        return {
+          label: document.getElementById(`label-${index}`).value,
+          url: document.getElementById(`url-${index}`).value
+        };
+      });
+      renderApps();
+      toggleEditMode(); // hide edit panel
+    }
+    
+    // Reorder functions: Move an app up in the list
+    function moveUp(index) {
+      if (index > 0) {
+        [apps[index - 1], apps[index]] = [apps[index], apps[index - 1]];
+        renderEditPanel();
+      }
+    }
+    
+    // Reorder functions: Move an app down in the list
+    function moveDown(index) {
+      if (index < apps.length - 1) {
+        [apps[index + 1], apps[index]] = [apps[index], apps[index + 1]];
+        renderEditPanel();
+      }
+    }
+    
+    // Dummy navigation function for sidebar links
+    function navigate(page) {
+      alert("Navigating to " + page);
+    }
+    
+    // Initial render of apps
+    renderApps();
+  </script>
 </body>
 </html>

@@ -4,73 +4,86 @@
   <meta charset="UTF-8">
   <title>Quoffice Launcher</title>
   <style>
-    /* Overall page styling */
+    /* Full-page gradient background */
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #4e54c8, #8f94fb);
-      color: #ffffff;
-      min-height: 100vh;
+      padding: 0;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      height: 100vh;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      color: #ffffff;
+    }
+    /* Central glassmorphism container */
+    .launcher-container {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 40px;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
     }
     /* Header styling */
-    .header {
-      text-align: center;
-      padding: 30px 0;
+    .launcher-header {
       font-size: 2.5em;
+      margin-bottom: 20px;
       font-weight: bold;
     }
-    /* Container for launcher buttons */
-    .container {
-      flex: 1;
+    /* Application buttons container */
+    .buttons {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: center;
-      padding: 20px;
+      gap: 20px;
+      margin-bottom: 30px;
     }
-    /* Styling for each launcher button */
-    .launcher-button {
+    /* Individual app buttons */
+    .app-button {
       background: rgba(255, 255, 255, 0.2);
-      border: none;
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 10px;
-      padding: 20px 40px;
-      margin: 15px;
-      font-size: 1.2em;
+      padding: 15px 25px;
+      font-size: 1.1em;
       text-decoration: none;
       color: #fff;
-      transition: background 0.3s ease, transform 0.3s ease;
+      transition: background 0.3s, transform 0.3s;
     }
-    .launcher-button:hover {
+    .app-button:hover {
       background: rgba(255, 255, 255, 0.4);
-      transform: translateY(-5px);
+      transform: translateY(-3px);
     }
-    /* Fixed tip of the day footer */
-    .tip-container {
-      background: rgba(0, 0, 0, 0.3);
-      border-top: 1px solid rgba(255,255,255,0.2);
-      padding: 15px;
-      text-align: center;
+    /* Tip of the Day section */
+    .tip-section {
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      padding-top: 15px;
       font-size: 1em;
+      margin-top: 20px;
+    }
+    .tip-section span.source {
+      font-style: italic;
+      font-size: 0.9em;
+      color: #dcdcdc;
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <div class="header">Quoffice Launcher</div>
-  
-  <!-- Launcher Buttons -->
-  <div class="container">
-    <!-- Update these href values to the actual paths of your applications -->
-    <a href="https://masterd2012.github.io/Quoffice2025/app1.html" target="_blank" class="launcher-button">Application 1</a>
-    <a href="https://masterd2012.github.io/Quoffice2025/app2.html" target="_blank" class="launcher-button">Application 2</a>
-    <a href="https://masterd2012.github.io/Quoffice2025/app3.html" target="_blank" class="launcher-button">Application 3</a>
-  </div>
-  
-  <!-- Tip of the Day -->
-  <div class="tip-container">
-    Tip of the Day: Stay organized and keep your workflow smooth!
+  <div class="launcher-container">
+    <div class="launcher-header">Quoffice Launcher</div>
+    <div class="buttons">
+      <!-- Replace these URLs with your actual application paths -->
+      <a href="https://masterd2012.github.io/Quoffice2025/app1.html" target="_blank" class="app-button">Application 1</a>
+      <a href="https://masterd2012.github.io/Quoffice2025/app2.html" target="_blank" class="app-button">Application 2</a>
+      <a href="https://masterd2012.github.io/Quoffice2025/app3.html" target="_blank" class="app-button">Application 3</a>
+    </div>
+    <div class="tip-section">
+      Tip of the Day: <strong>Stay organized for better productivity!</strong><br>
+      <span class="source">Source: Quoffice Online</span>
+    </div>
   </div>
 </body>
 </html>

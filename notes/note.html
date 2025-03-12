@@ -24,6 +24,11 @@
       padding: 10px;
       border: 1px solid #ccc;
     }
+    button {
+      padding: 10px 15px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -41,7 +46,9 @@
     <button onclick="execCmd('underline')">Underline</button>
   </div>
   <div id="editor" contenteditable="true"></div>
+  <br>
   <button onclick="saveNote()">Save Note</button>
+  <button onclick="deleteNote()" style="background:#e74c3c;color:#fff;">Delete Note</button>
 
   <script>
     // Retrieve the note id from the URL parameters
@@ -70,12 +77,23 @@
 
     // Save the note changes
     function saveNote() {
+      if (!currentNote) return;
       currentNote.title = titleInput.value;
       currentNote.category = categorySelect.value;
       currentNote.color = colorInput.value;
       currentNote.content = editor.innerHTML;
       localStorage.setItem('notes', JSON.stringify(notes));
       alert('Note saved!');
+    }
+
+    // Delete the note after confirmation
+    function deleteNote() {
+      if (confirm('Are you sure you want to delete this note?')) {
+        notes = notes.filter(n => n.id != noteId);
+        localStorage.setItem('notes', JSON.stringify(notes));
+        alert('Note deleted!');
+        window.close(); // Close the current note window
+      }
     }
 
     // Optional: Auto-save the note every 30 seconds

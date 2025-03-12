@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #options, #taskContainer {
+            display: none;
+            margin-top: 20px;
+        }
+        .task {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: inline-block;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Productivity Manager</h1>
+    <label for="taskType">What do you want to manage?</label>
+    <select id="taskType">
+        <option value="" disabled selected>Select an option</option>
+        <option value="work">Work</option>
+        <option value="study">Study</option>
+        <option value="fitness">Fitness</option>
+    </select>
+    <button onclick="showOptions()">Start</button>
+
+    <div id="options">
+        <h2>Choose a Task:</h2>
+        <div id="taskOptions"></div>
+    </div>
+
+    <div id="taskContainer">
+        <h2>Tasks</h2>
+        <ul id="taskList"></ul>
+        <input type="text" id="newTask" placeholder="Enter a new task">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <script>
+        const taskData = {
+            work: ["Emails", "Meetings", "Project Deadlines"],
+            study: ["Reading", "Assignments", "Exam Preparation"],
+            fitness: ["Workout", "Running", "Yoga"]
+        };
+
+        function showOptions() {
+            const taskType = document.getElementById("taskType").value;
+            if (!taskType) return;
+
+            const taskOptionsDiv = document.getElementById("taskOptions");
+            taskOptionsDiv.innerHTML = "";
+
+            taskData[taskType].forEach(task => {
+                let div = document.createElement("div");
+                div.className = "task";
+                div.textContent = task;
+                div.onclick = () => startManaging(task);
+                taskOptionsDiv.appendChild(div);
+            });
+
+            document.getElementById("options").style.display = "block";
+        }
+
+        function startManaging(taskName) {
+            document.getElementById("taskContainer").style.display = "block";
+            document.getElementById("taskList").innerHTML = `<li>${taskName}</li>`;
+        }
+
+        function addTask() {
+            const newTask = document.getElementById("newTask").value;
+            if (!newTask) return;
+
+            let li = document.createElement("li");
+            li.textContent = newTask;
+            document.getElementById("taskList").appendChild(li);
+            document.getElementById("newTask").value = "";
+        }
+    </script>
+
+</body>
+</html>

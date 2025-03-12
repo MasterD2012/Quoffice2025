@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Modern Notes Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #2196F3;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+    #container {
+      display: flex;
+    }
+    #sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      min-height: 100vh;
+    }
+    #sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    #sidebar li {
+      padding: 10px;
+      cursor: pointer;
+    }
+    #sidebar li:hover {
+      background: #444;
+    }
+    #content {
+      flex: 1;
+      padding: 20px;
+    }
+    .note-item {
+      background: white;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #F44336;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 36px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Modern Notes Dashboard</h1>
+  </header>
+  <div id="container">
+    <div id="sidebar">
+      <ul>
+        <li data-category="all">All Notes</li>
+        <li data-category="work">Work</li>
+        <li data-category="personal">Personal</li>
+        <li data-category="ideas">Ideas</li>
+      </ul>
+    </div>
+    <div id="content">
+      <div id="notesList"></div>
+    </div>
+  </div>
+  <div class="fab" onclick="createNote()">+</div>
+
+  <script>
+    // Load notes from localStorage (or initialize an empty array)
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    const notesList = document.getElementById('notesList');
+    const sidebarItems = document.querySelectorAll('#sidebar li');
+
+    // Function to display notes in the dashboard
+    function displayNotes(filter = 'all') {
+      notesList.innerHTML = '';
+      let filteredNotes = filter === 'all' ? notes : notes.filter(note => note.category === filter);
+      filteredNotes.forEach(note => {
+        let div = document.createElement('div');
+        div.className = 'note-item';
+        div.style.backgroundColor = note.color;
+        div.textContent = note.title || 'Untitled Note';
+        div.onclick = () => openNote(note.id);
+        notesList.appendChild(div);
+      });
+    }
+
+    // Sidebar filtering by category
+    sidebarItems.forEach(item => {
+      item.addEventListener('click', function(){
+        displayNotes(this.getAttribute('data-category'));
+      });
+    });
+
+    // Create a new note object and open the note editor
+    function createNote() {
+      const newNote = {
+        id: Date.now(),
+        title: '',
+        content: '',
+        category: 'personal',
+        color: '#ffffff'
+      };
+      notes.push(newNote);
+      localStorage.setItem('notes', JSON.stringify(notes));
+      openNote(newNote.id);
+    }
+
+    // Open the note editor in a new window/tab
+    function openNote(id) {
+      window.open('note.html?id=' + id, '_blank', 'width=600,height=600');
+    }
+
+    // Initialize display
+    displayNotes();
+  </script>
+</body>
+</html>

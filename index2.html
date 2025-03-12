@@ -4,257 +4,310 @@
   <meta charset="UTF-8">
   <title>Quoffice Launcher</title>
   <style>
-    /* Basic reset */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    /* Global styles */
+    * { box-sizing: border-box; }
     body, html {
-      height: 100%;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
-    }
-    /* Layout using flexbox */
-    .wrapper {
-      display: flex;
       height: 100%;
+      display: flex;
+      overflow: hidden;
     }
-    /* Sidebar styling */
+    /* Sidebar */
     .sidebar {
-      width: 200px;
-      background: #323232;
+      width: 220px;
+      background: #2c2c2c;
       color: #fff;
       display: flex;
       flex-direction: column;
-      padding-top: 20px;
     }
     .sidebar a {
-      color: #fff;
+      padding: 15px;
       text-decoration: none;
-      padding: 15px 20px;
-      display: block;
-      transition: background 0.3s;
+      color: #fff;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
     }
     .sidebar a:hover {
-      background: #444;
+      background: #3c3c3c;
     }
-    /* Main content area */
+    .sidebar .bottom {
+      margin-top: auto;
+    }
+    /* Main Content Area */
     .content {
       flex: 1;
-      background: #f3f3f3;
+      background: #f4f4f4;
       padding: 20px;
       overflow-y: auto;
+      position: relative;
     }
-    .header {
-      font-size: 2em;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    /* Grid of application buttons */
+    .page { display: none; }
+    .page.active { display: block; }
+    h1 { margin-bottom: 20px; }
+    /* My Apps grid with drag and drop */
     .app-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
     }
-    .app-button {
+    .app-item {
       background: #0078d7;
       color: #fff;
-      padding: 15px;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background 0.3s, transform 0.3s;
-      display: block;
-    }
-    .app-button:hover {
-      background: #005a9e;
-      transform: translateY(-3px);
-    }
-    /* Edit Mode Panel */
-    .edit-panel {
-      margin-top: 30px;
       padding: 20px;
+      flex: 0 0 150px;
+      text-align: center;
+      border-radius: 5px;
+      cursor: move;
+      user-select: none;
+    }
+    .app-item.dragging { opacity: 0.5; }
+    /* My Sites List */
+    .site-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+    .site-list li {
+      background: #fff;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    /* Settings Page */
+    .settings-item { margin-bottom: 15px; }
+    /* Tip of the Day Box */
+    .tip-box {
       background: #fff;
       border: 1px solid #ccc;
+      padding: 10px;
       border-radius: 5px;
-      display: none;
-    }
-    .edit-panel h2 {
-      margin-bottom: 15px;
-      color: #333;
-    }
-    .edit-item {
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
-    }
-    .edit-item:last-child {
-      border-bottom: none;
-    }
-    .edit-item label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #555;
-    }
-    .edit-item input {
-      padding: 8px;
-      width: 100%;
-      margin-bottom: 5px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
-    .reorder-buttons button {
-      padding: 5px 10px;
-      margin-right: 5px;
-      font-size: 0.9em;
-    }
-    .edit-toggle {
-      margin-bottom: 20px;
-      padding: 10px 15px;
-      background: #0078d7;
-      color: #fff;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .edit-toggle:hover {
-      background: #005a9e;
-    }
-    .save-edit {
-      background: #28a745;
-      border: none;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .save-edit:hover {
-      background: #218838;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-      <a href="#" onclick="navigate('home')">Home</a>
-      <a href="#" onclick="navigate('myapps')">My Apps</a>
-    </div>
-    
-    <!-- Main Content Area -->
-    <div class="content">
-      <div class="header">Quoffice Launcher</div>
-      <!-- Edit Mode Toggle -->
-      <button class="edit-toggle" onclick="toggleEditMode()">Toggle Edit Mode</button>
-      
-      <!-- Application Grid -->
-      <div id="appGrid" class="app-grid">
-        <!-- App buttons are populated here -->
-      </div>
-      
-      <!-- Edit Panel -->
-      <div id="editPanel" class="edit-panel">
-        <h2>Edit Menus</h2>
-        <div id="editItems">
-          <!-- Edit items are dynamically inserted here -->
-        </div>
-        <button class="save-edit" onclick="saveEdits()">Save Changes</button>
-      </div>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <a onclick="navigate('apps')">My Apps</a>
+    <a onclick="navigate('sites')">My Sites</a>
+    <a onclick="navigate('settings')">Settings</a>
+    <div class="bottom">
+      <a onclick="navigate('home')">Home</a>
     </div>
   </div>
-  
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- My Apps Page -->
+    <div id="page-apps" class="page active">
+      <h1>My Apps</h1>
+      <div class="app-grid" id="appGrid">
+        <!-- App items will be populated here -->
+      </div>
+    </div>
+
+    <!-- My Sites Page -->
+    <div id="page-sites" class="page">
+      <h1>My Sites</h1>
+      <ul id="siteList" class="site-list"></ul>
+      <h3>Add New Site</h3>
+      <div>
+        <input type="text" id="newSiteLabel" placeholder="Site Name">
+        <input type="text" id="newSiteURL" placeholder="Site URL">
+        <button onclick="addSite()">Add Site</button>
+      </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="page-settings" class="page">
+      <h1>Settings</h1>
+      <div class="settings-item">
+        <label>
+          <input type="checkbox" id="tipAutoRefreshToggle">
+          Enable Auto Refresh Tip of the Day
+        </label>
+      </div>
+      <div class="settings-item">
+        <button onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+
+    <!-- Tip of the Day Box -->
+    <div id="tipBox" class="tip-box">
+      <strong>Tip of the Day:</strong>
+      <div id="tipContent">Loading tip...</div>
+    </div>
+  </div>
+
   <script>
-    // Sample data for apps (can be customized or dynamically loaded)
+    /***********************
+     * Data Initialization *
+     ***********************/
+    // Fixed apps (links not editable by the user)
     let apps = [
       { label: "Application 1", url: "https://masterd2012.github.io/Quoffice2025/app1.html" },
       { label: "Application 2", url: "https://masterd2012.github.io/Quoffice2025/app2.html" },
       { label: "Application 3", url: "https://masterd2012.github.io/Quoffice2025/app3.html" }
     ];
-    
-    const appGrid = document.getElementById('appGrid');
-    const editPanel = document.getElementById('editPanel');
-    const editItems = document.getElementById('editItems');
-    let editMode = false;
-    
-    // Render the app buttons in the grid
-    function renderApps() {
-      appGrid.innerHTML = "";
-      apps.forEach((app, index) => {
-        const a = document.createElement('a');
-        a.href = app.url;
-        a.target = "_blank";
-        a.className = "app-button";
-        a.textContent = app.label;
-        appGrid.appendChild(a);
-      });
+    // My Sites: load from localStorage or start empty
+    let mySites = JSON.parse(localStorage.getItem('mySites')) || [];
+    // Settings: Tip auto-refresh enabled by default (can be toggled in settings)
+    let settings = {
+      tipAutoRefresh: localStorage.getItem('tipAutoRefresh') === 'false' ? false : true
+    };
+
+    /***********************
+     * Navigation Handling *
+     ***********************/
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      if (page === 'apps' || page === 'home') {
+        document.getElementById('page-apps').classList.add('active');
+      } else if (page === 'sites') {
+        document.getElementById('page-sites').classList.add('active');
+        renderSites();
+      } else if (page === 'settings') {
+        document.getElementById('page-settings').classList.add('active');
+        document.getElementById('tipAutoRefreshToggle').checked = settings.tipAutoRefresh;
+      }
+      // Show or hide tip box based on settings and current page.
+      document.getElementById('tipBox').style.display = settings.tipAutoRefresh ? 'block' : 'none';
     }
-    
-    // Render the edit panel fields
-    function renderEditPanel() {
-      editItems.innerHTML = "";
+
+    /**********************************
+     * My Apps: Drag & Drop Handling  *
+     **********************************/
+    function renderApps() {
+      const grid = document.getElementById('appGrid');
+      grid.innerHTML = '';
       apps.forEach((app, index) => {
         const div = document.createElement('div');
-        div.className = "edit-item";
-        div.innerHTML = `
-          <label>App ${index + 1}</label>
-          <input type="text" id="label-${index}" value="${app.label}" placeholder="Label">
-          <input type="text" id="url-${index}" value="${app.url}" placeholder="URL">
-          <div class="reorder-buttons">
-            <button onclick="moveUp(${index})">Up</button>
-            <button onclick="moveDown(${index})">Down</button>
-          </div>
-        `;
-        editItems.appendChild(div);
+        div.className = 'app-item';
+        div.draggable = true;
+        div.dataset.index = index;
+        div.innerText = app.label;
+        // Drag events
+        div.addEventListener('dragstart', dragStart);
+        div.addEventListener('dragover', dragOver);
+        div.addEventListener('drop', drop);
+        div.addEventListener('dragend', dragEnd);
+        // Open the app on click (if not dragging)
+        div.addEventListener('click', function(e) {
+          if (!this.classList.contains('dragging')) {
+            window.open(app.url, '_blank');
+          }
+        });
+        grid.appendChild(div);
       });
     }
-    
-    // Toggle Edit Mode display
-    function toggleEditMode() {
-      editMode = !editMode;
-      editPanel.style.display = editMode ? "block" : "none";
-      if (editMode) {
-        renderEditPanel();
+
+    let dragSrcEl = null;
+    function dragStart(e) {
+      dragSrcEl = this;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    function dragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+    function drop(e) {
+      e.stopPropagation();
+      if (dragSrcEl !== this) {
+        let fromIndex = parseInt(dragSrcEl.dataset.index);
+        let toIndex = parseInt(this.dataset.index);
+        // Swap positions in the apps array
+        [apps[fromIndex], apps[toIndex]] = [apps[toIndex], apps[fromIndex]];
+        renderApps();
+      }
+      return false;
+    }
+    function dragEnd(e) {
+      this.classList.remove('dragging');
+    }
+
+    /******************************
+     * My Sites: Manage User Sites *
+     ******************************/
+    function renderSites() {
+      const list = document.getElementById('siteList');
+      list.innerHTML = '';
+      mySites.forEach(site => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${site.url}" target="_blank">${site.label}</a>`;
+        list.appendChild(li);
+      });
+    }
+    function addSite() {
+      const label = document.getElementById('newSiteLabel').value.trim();
+      const url = document.getElementById('newSiteURL').value.trim();
+      if (label && url) {
+        mySites.push({ label, url });
+        localStorage.setItem('mySites', JSON.stringify(mySites));
+        document.getElementById('newSiteLabel').value = '';
+        document.getElementById('newSiteURL').value = '';
+        renderSites();
       }
     }
-    
-    // Save changes from edit panel
-    function saveEdits() {
-      apps = apps.map((app, index) => {
-        return {
-          label: document.getElementById(`label-${index}`).value,
-          url: document.getElementById(`url-${index}`).value
-        };
-      });
+
+    /******************************
+     * Settings & Tip-of-the-Day  *
+     ******************************/
+    let tipInterval = null;
+    // List the tip file names available in your "totd" folder
+    let tipFiles = ["tip1.txt", "tip2.txt", "tip3.txt"]; // update this list as needed
+
+    function fetchTip() {
+      const randomTip = tipFiles[Math.floor(Math.random() * tipFiles.length)];
+      // Assumes your tip files are located at "totd/<filename>"
+      fetch(`totd/${randomTip}`)
+        .then(response => response.text())
+        .then(text => {
+          document.getElementById('tipContent').innerText = text;
+        })
+        .catch(err => {
+          document.getElementById('tipContent').innerText = "Failed to load tip.";
+        });
+    }
+
+    function startTipAutoRefresh() {
+      if (settings.tipAutoRefresh) {
+        fetchTip();
+        tipInterval = setInterval(fetchTip, 60000); // refresh every 60 seconds
+      }
+    }
+    function stopTipAutoRefresh() {
+      clearInterval(tipInterval);
+      tipInterval = null;
+    }
+    function saveSettings() {
+      settings.tipAutoRefresh = document.getElementById('tipAutoRefreshToggle').checked;
+      localStorage.setItem('tipAutoRefresh', settings.tipAutoRefresh);
+      alert('Settings saved!');
+      // Restart or stop tip refresh based on setting
+      stopTipAutoRefresh();
+      if (settings.tipAutoRefresh) {
+        startTipAutoRefresh();
+        document.getElementById('tipBox').style.display = 'block';
+      } else {
+        document.getElementById('tipBox').style.display = 'none';
+      }
+    }
+
+    /***********************
+     * Initialize Launcher *
+     ***********************/
+    window.onload = function() {
       renderApps();
-      toggleEditMode(); // hide edit panel
-    }
-    
-    // Reorder functions: Move an app up in the list
-    function moveUp(index) {
-      if (index > 0) {
-        [apps[index - 1], apps[index]] = [apps[index], apps[index - 1]];
-        renderEditPanel();
+      navigate('apps');
+      if (settings.tipAutoRefresh) {
+        startTipAutoRefresh();
+      } else {
+        document.getElementById('tipBox').style.display = 'none';
       }
     }
-    
-    // Reorder functions: Move an app down in the list
-    function moveDown(index) {
-      if (index < apps.length - 1) {
-        [apps[index + 1], apps[index]] = [apps[index], apps[index + 1]];
-        renderEditPanel();
-      }
-    }
-    
-    // Dummy navigation function for sidebar links
-    function navigate(page) {
-      alert("Navigating to " + page);
-    }
-    
-    // Initial render of apps
-    renderApps();
   </script>
 </body>
 </html>

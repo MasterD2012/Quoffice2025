@@ -2,29 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tip of the Day Example</title>
+  <title>Quoffice Launcher</title>
   <style>
+    /* Your existing styles… */
     body {
-      font-family: sans-serif;
-      margin: 20px;
-      background: #f0f0f0;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
       color: #333;
     }
+    /* Example styling for tip box */
     #tipBox {
       background: #fff;
       border: 1px solid #ccc;
       padding: 15px;
       max-width: 600px;
-      margin: auto;
+      margin: 20px auto;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
-  <h1>Tip of the Day</h1>
+  <!-- Your existing page content -->
+
+  <!-- For example, here is your navigation and main content -->
+  <header>
+    <h1>Quoffice Launcher</h1>
+    <!-- Other header content -->
+  </header>
+  
+  <main>
+    <!-- Your existing content like app grids, site lists, etc. -->
+    <section id="appsSection">
+      <!-- Your apps content -->
+    </section>
+    <section id="sitesSection">
+      <!-- Your sites content -->
+    </section>
+  </main>
+  
+  <!-- Tip of the Day Box -->
   <div id="tipBox">Loading tip...</div>
 
+  <!-- Your existing scripts may go here -->
+  <script>
+    // Your existing JS functions (renderApps, navigate, etc.)
+  </script>
+
+  <!-- Tip of the Day System -->
   <script>
     // Change these values to match your GitHub repository details:
     const username = "masterd2012";
@@ -42,7 +68,7 @@
           return response.json();
         })
         .then(files => {
-          // Filter for files that match your expected pattern (e.g., t1.txt, t2.txt, ...)
+          // Filter for files that match your expected pattern (e.g., t1.txt, t2.txt, etc.)
           return files.filter(file => file.name.match(/^t\d+\.txt$/));
         });
     }
@@ -68,12 +94,12 @@
           document.getElementById("tipBox").innerText = text.trim();
         })
         .catch(error => {
-          console.error(error);
+          console.error("Error fetching tip:", error);
           document.getElementById("tipBox").innerText = "Failed to load tip.";
         });
     }
 
-    // Fetch a tip immediately on load...
+    // Fetch a tip on page load...
     fetchRandomTip();
     // ...and then every 2 minutes (120,000 milliseconds)
     setInterval(fetchRandomTip, 120000);

@@ -1,33 +1,29 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const app = express();
-const port = process.env.PORT || 3000;
+function fetchTip() {
+    const maxTips = 100; // Adjust this number based on how many tips you have
+    const randomIndex = Math.floor(Math.random() * maxTips) + 1;
+    const filePath = `totd/t${randomIndex}.txt`;
 
-app.use(express.static('public'));
+    fetch(filePath)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Tip file not found");
+            }
+            return response.text();
+        })
+        .then(text => {
+            document.getElementById("tipContent").innerText = text;
+        })
+        .catch(error => {
+            console.log("Error fetching tip, trying another...", error);
+            fetchTip(); // Try again with another file
+        });
+}
 
-app.get('/list-tips', (req, res) => {
-  const tipsDir = path.join(__dirname, 'public', 'totd');
-  fs.readdir(tipsDir, (err, files) => {
-    if (err) {
-      return res.status(500).json({ error: 'Unable to scan directory' });
-    }
-    const tipFiles = files.filter(file => path.extname(file) === '.txt');
-    res.json(tipFiles);
-  });
-});
+// Auto-refresh functionality
+let autoRefresh = true; // Set to false if disabled in settings
+if (autoRefresh) {
+    setInterval(fetchTip, 10000); // Refreshes every 10 seconds
+}
 
-app.get('/tip-content/:filename', (req, res) => {
-  const tipsDir = path.join(__dirname, 'public', 'totd');
-  const filePath = path.join(tipsDir, req.params.filename);
-  fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: 'Unable to read file' });
-    }
-    res.send(data);
-  });
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// Fetch a tip on page load
+fetchTip();

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tip of the Day Example</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background: #f0f0f0;
+      color: #333;
+    }
+    #tipBox {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 15px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>Tip of the Day</h1>
+  <div id="tipBox">Loading tip...</div>
+
+  <script>
+    // Change these values to match your GitHub repository details:
+    const username = "masterd2012";
+    const repo = "Quoffice2025";
+    const folder = "totd"; // Folder where tip files reside
+
+    // Fetch list of files from GitHub API in the specified folder.
+    function fetchTipList() {
+      const apiURL = `https://api.github.com/repos/${username}/${repo}/contents/${folder}`;
+      return fetch(apiURL)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch tip list");
+          }
+          return response.json();
+        })
+        .then(files => {
+          // Filter for files that match your expected pattern (e.g., t1.txt, t2.txt, ...)
+          return files.filter(file => file.name.match(/^t\d+\.txt$/));
+        });
+    }
+
+    // Pick a random tip from the list and fetch its content
+    function fetchRandomTip() {
+      fetchTipList()
+        .then(tipFiles => {
+          if (tipFiles.length === 0) {
+            throw new Error("No tip files found");
+          }
+          const randomIndex = Math.floor(Math.random() * tipFiles.length);
+          const randomTip = tipFiles[randomIndex];
+          return fetch(randomTip.download_url);
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch tip content");
+          }
+          return response.text();
+        })
+        .then(text => {
+          document.getElementById("tipBox").innerText = text.trim();
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById("tipBox").innerText = "Failed to load tip.";
+        });
+    }
+
+    // Fetch a tip immediately on load...
+    fetchRandomTip();
+    // ...and then every 2 minutes (120,000 milliseconds)
+    setInterval(fetchRandomTip, 120000);
+  </script>
+</body>
+</html>

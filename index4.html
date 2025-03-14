@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quoffice Launcher</title>
+  <link rel="icon" href="Q2025Logo.ico">
+  <style>
+    /* Global styles */
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      display: flex;
+      overflow: hidden;
+    }
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: #2c2c2c;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      padding: 15px;
+      text-decoration: none;
+      color: #fff;
+      border-bottom: 1px solid #444;
+      cursor: pointer;
+    }
+    .sidebar a:hover {
+      background: #3c3c3c;
+    }
+    .sidebar .bottom {
+      margin-top: auto;
+    }
+    /* Main Content Area */
+    .content {
+      flex: 1;
+      background: #f4f4f4;
+      padding: 20px;
+      overflow-y: auto;
+      position: relative;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+    h1 { margin-bottom: 20px; }
+    /* My Apps grid with drag and drop */
+    .app-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .app-item {
+      background: #0078d7;
+      color: #fff;
+      padding: 20px;
+      flex: 0 0 150px;
+      text-align: center;
+      border-radius: 5px;
+      cursor: move;
+      user-select: none;
+    }
+    .app-item.dragging { opacity: 0.5; }
+    /* My Sites List */
+    .site-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+    .site-list li {
+      background: #fff;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    /* Settings Page */
+    .settings-item { margin-bottom: 15px; }
+    /* Tip of the Day Box */
+    .tip-box {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <a onclick="navigate('apps')">My Apps</a>
+    <a onclick="navigate('sites')">My Sites</a>
+    <a onclick="navigate('settings')">Settings</a>
+    <div class="bottom">
+      <a onclick="navigate('home')">Home</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- My Apps Page -->
+    <div id="page-apps" class="page active">
+      <h1>My Apps</h1>
+      <div class="app-grid" id="appGrid">
+        <!-- App items will be populated here -->
+      </div>
+    </div>
+
+    <!-- My Sites Page -->
+    <div id="page-sites" class="page">
+      <h1>My Sites</h1>
+      <ul id="siteList" class="site-list"></ul>
+      <h3>Add New Site</h3>
+      <div>
+        <input type="text" id="newSiteLabel" placeholder="Site Name">
+        <input type="text" id="newSiteURL" placeholder="Site URL">
+        <button onclick="addSite()">Add Site</button>
+      </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="page-settings" class="page">
+      <h1>Settings</h1>
+      <div class="settings-item">
+        <label>
+          <input type="checkbox" id="tipAutoRefreshToggle">
+          Enable Auto Refresh Tip of the Day
+        </label>
+      </div>
+      <div class="settings-item">
+        <button onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+
+    <!-- Tip of the Day Box -->
+    <div id="tipBox" class="tip-box">
+      <strong>Tip of the Day:</strong>
+      <div id="tipContent">Loading tip...</div>
+    </div>
+  </div>
+
+  <script>
+    /***********************
+     * Data Initialization *
+     ***********************/
+    // Fixed apps (links not editable by the user)
+    let apps = [
+      { label: "Type", url: "https://masterd2012.github.io/Quoffice2025/type/" },
+      { label: "Notes", url: "https://masterd2012.github.io/Quoffice2025/notes/" },
+      { label: "Slides", url: "https://masterd2012.github.io/Quoffice2025/slides/" },
+      { label: "sheets", url: "https://masterd2012.github.io/Quoffice2025/sheets/app/" },
+    ];
+    // My Sites: load from localStorage or start empty
+    let mySites = JSON.parse(localStorage.getItem('mySites')) || [];
+    // Settings: Tip auto-refresh enabled by default (can be toggled in settings)
+    let settings = {
+      tipAutoRefresh: localStorage.getItem('tipAutoRefresh') === 'false' ? false : true
+    };
+
+    /***********************
+     * Navigation Handling *
+     ***********************/
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      if (page === 'apps' || page === 'home') {
+        document.getElementById('page-apps').classList.add('active');
+      } else if (page === 'sites') {
+        document.getElementById('page-sites').classList.add('active');
+        renderSites();
+      } else if (page === 'settings') {
+        document.getElementById('page-settings').classList.add('active');
+        document.getElementById('tipAutoRefreshToggle').checked = settings.tipAutoRefresh;
+      }
+      // Show or hide tip box based on settings and current page.
+      document.getElementById('tipBox').style.display = settings.tipAutoRefresh ? 'block' : 'none';
+    }
+
+    /**********************************
+     * My Apps: Drag & Drop Handling  *
+     **********************************/
+    function renderApps() {
+      const grid = document.getElementById('appGrid');
+      grid.innerHTML = '';
+      apps.forEach((app, index) => {
+        const div = document.createElement('div');
+        div.className = 'app-item';
+        div.draggable = true;
+        div.dataset.index = index;
+        div.innerText = app.label;
+        // Drag events
+        div.addEventListener('dragstart', dragStart);
+        div.addEventListener('dragover', dragOver);
+        div.addEventListener('drop', drop);
+        div.addEventListener('dragend', dragEnd);
+        // Open the app on click (if not dragging)
+        div.addEventListener('click', function(e) {
+          if (!this.classList.contains('dragging')) {
+            window.open(app.url, '_blank');
+          }
+        });
+        grid.appendChild(div);
+      });
+    }
+
+    let dragSrcEl = null;
+    function dragStart(e) {
+      dragSrcEl = this;
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    function dragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+    function drop(e) {
+      e.stopPropagation();
+      if (dragSrcEl !== this) {
+        let fromIndex = parseInt(dragSrcEl.dataset.index);
+        let toIndex = parseInt(this.dataset.index);
+        // Swap positions in the apps array
+        [apps[fromIndex], apps[toIndex]] = [apps[toIndex], apps[fromIndex]];
+        renderApps();
+      }
+      return false;
+    }
+    function dragEnd(e) {
+      this.classList.remove('dragging');
+    }
+
+    /******************************
+     * My Sites: Manage User Sites *
+     ******************************/
+
+    <script src="scripts/fetchTip.js"></script>
+
+  <div id="tipContent">Loading tip...</div>
+
+  
+    function renderSites() {
+      const list = document.getElementById('siteList');
+      list.innerHTML = '';
+      mySites.forEach(site => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${site.url}" target="_blank">${site.label}</a>`;
+        list.appendChild(li);
+      });
+    }
+    function addSite() {
+      const label = document.getElementById('newSiteLabel').value.trim();
+      const url = document.getElementById('newSiteURL').value.trim();
+      if (label && url) {
+        mySites.push({ label, url });
+        localStorage.setItem('mySites', JSON.stringify(mySites));
+        document.getElementById('newSiteLabel').value = '';
+        document.getElementById('newSiteURL').value = '';
+        renderSites();
+      }
+    }
+
+    /******************************
+     * Settings & Tip-of-the-Day  *
+     ******************************/
+    let tipInterval = null;
+    // List the tip file names available in your "totd" folder
+    let tipFiles = ["tip1.txt", "tip2.txt", "tip3.txt"]; // update this list as needed
+
+    <script>
+    // Change these values to match your GitHub repository details:
+    const username = "masterd2012";
+    const repo = "Quoffice2025";
+    const folder = "totd"; // Folder where tip files reside
+
+    // Fetch list of files from GitHub API in the specified folder.
+    function fetchTipList() {
+      const apiURL = `https://api.github.com/repos/${username}/${repo}/contents/${folder}`;
+      return fetch(apiURL)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch tip list");
+          }
+          return response.json();
+        })
+        .then(files => {
+          // Filter for files that match your expected pattern (e.g., t1.txt, t2.txt, etc.)
+          return files.filter(file => file.name.match(/^t\d+\.txt$/));
+        });
+    }
+
+    // Pick a random tip from the list and fetch its content
+    function fetchRandomTip() {
+      fetchTipList()
+        .then(tipFiles => {
+          if (tipFiles.length === 0) {
+            throw new Error("No tip files found");
+          }
+          const randomIndex = Math.floor(Math.random() * tipFiles.length);
+          const randomTip = tipFiles[randomIndex];
+          return fetch(randomTip.download_url);
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch tip content");
+          }
+          return response.text();
+        })
+        .then(text => {
+          document.getElementById("tipBox").innerText = text.trim();
+        })
+        .catch(error => {
+          console.error("Error fetching tip:", error);
+          document.getElementById("tipBox").innerText = "Failed to load tip.";
+        });
+    }
+
+    // Fetch a tip on page load...
+    fetchRandomTip();
+    // ...and then every 2 minutes (120,000 milliseconds)
+    setInterval(fetchRandomTip, 120000);
+  </script>
+  
+  /***********************
+     * Initialize Launcher *
+     ***********************/
+    window.onload = function() {
+      renderApps();
+      navigate('apps');
+      if (settings.tipAutoRefresh) {
+        startTipAutoRefresh();
+      } else {
+        document.getElementById('tipBox').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

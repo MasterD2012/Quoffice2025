@@ -1,262 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Quoffice Launcher</title>
-  <link rel="icon" href="Q2025Logo.ico">
-  <style>
-    /* Global styles */
-    * { box-sizing: border-box; }
-    body, html {
-      margin: 0; padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      height: 100%;
-      display: flex;
-      overflow: hidden;
-    }
-    /* Sidebar */
-    .sidebar {
-      width: 220px;
-      background: #2c2c2c;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-    }
-    .sidebar a {
-      padding: 15px;
-      text-decoration: none;
-      color: #fff;
-      border-bottom: 1px solid #444;
-      cursor: pointer;
-    }
-    .sidebar a:hover {
-      background: #3c3c3c;
-    }
-    .sidebar .bottom {
-      margin-top: auto;
-    }
-    /* Main Content Area */
-    .content {
-      flex: 1;
-      background: #f4f4f4;
-      padding: 20px;
-      overflow-y: auto;
-      position: relative;
-    }
-    .page { display: none; }
-    .page.active { display: block; }
-    h1 { margin-bottom: 20px; }
-    /* My Apps grid with drag and drop */
-    .app-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-    .app-item {
-      background: #0078d7;
-      color: #fff;
-      padding: 20px;
-      flex: 0 0 150px;
-      text-align: center;
-      border-radius: 5px;
-      cursor: move;
-      user-select: none;
-    }
-    .app-item.dragging { opacity: 0.5; }
-    /* My Sites List */
-    .site-list {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 20px;
-    }
-    .site-list li {
-      background: #fff;
-      margin-bottom: 10px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    /* Settings Page */
-    .settings-item { margin-bottom: 15px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoffice Launcher</title>
+    <link rel="icon" href="Q2025Logo.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+        nav button {
+            background-color: #333;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        nav button:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        section {
+            display: none;
+            padding: 20px;
+        }
+        section.active {
+            display: block;
+        }
+        #appsList, #siteList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #appsList li, #siteList li {
+            margin: 5px 0;
+        }
+        #appsList li a, #siteList li a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+        #appsList li a:hover, #siteList li a:hover {
+            text-decoration: underline;
+        }
+        #newSiteForm {
+            margin-top: 20px;
+        }
+        #newSiteForm input {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        #newSiteForm button {
+            padding: 5px 10px;
+        }
+        #settingsForm {
+            margin-top: 20px;
+        }
+        #settingsForm label {
+            display: block;
+            margin: 10px 0;
+        }
+        #settingsForm button {
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
-  <div class="sidebar">
-    <a onclick="navigate('apps')">My Apps</a>
-    <a onclick="navigate('sites')">My Sites</a>
-    <a onclick="navigate('settings')">Settings</a>
-    <div class="bottom">
-      <a onclick="navigate('home')">Home</a>
-    </div>
-  </div>
+    <header>
+        <h1>Quoffice Launcher</h1>
+    </header>
+    <nav>
+        <button onclick="navigate('apps')">My Apps</button>
+        <button onclick="navigate('sites')">My Sites</button>
+        <button onclick="navigate('settings')">Settings</button>
+    </nav>
+    <section id="apps" class="active">
+        <h2>My Apps</h2>
+        <ul id="appsList">
+            <!-- List of apps will be dynamically populated here -->
+        </ul>
+    </section>
+    <section id="sites">
+        <h2>My Sites</h2>
+        <ul id="siteList">
+            <!-- List of sites will be dynamically populated here -->
+        </ul>
+        <div id="newSiteForm">
+            <h3>Add New Site</h3>
+            <input type="text" id="newSiteLabel" placeholder="Site Name">
+            <input type="url" id="newSiteURL" placeholder="Site URL">
+            <button onclick="addSite()">Add Site</button>
+        </div>
+    </section>
+    <section id="settings">
+        <h2>Settings</h2>
+        <form id="settingsForm">
+            <!-- Settings options will be added here -->
+            <button type="button" onclick="saveSettings()">Save Settings</button>
+        </form>
+    </section>
 
-  <!-- Main Content -->
-  <div class="content">
-    <!-- My Apps Page -->
-    <div id="page-apps" class="page active">
-      <h1>My Apps</h1>
-      <div class="app-grid" id="appGrid">
-        <!-- App items will be populated here -->
-      </div>
-    </div>
+    <script>
+        // JavaScript code to handle navigation and dynamic content
+        const sections = document.querySelectorAll('section');
+        const appsList = document.getElementById('appsList');
+        const siteList = document.getElementById('siteList');
 
-    <!-- My Sites Page -->
-    <div id="page-sites" class="page">
-      <h1>My Sites</h1>
-      <ul id="siteList" class="site-list"></ul>
-      <h3>Add New Site</h3>
-      <div>
-        <input type="text" id="newSiteLabel" placeholder="Site Name">
-        <input type="text" id="newSiteURL" placeholder="Site URL">
-        <button onclick="addSite()">Add Site</button>
-      </div>
-    </div>
+        const myApps = [
+            { name: 'App 1', url: 'https://example.com/app1' },
+            { name: 'App 2', url: 'https://example.com/app2' }
+            // Add more apps as needed
+        ];
 
-    <!-- Settings Page -->
-    <div id="page-settings" class="page">
-      <h1>Settings</h1>
-      <div class="settings-item">
-        <label>
-        </label>
-      </div>
-      <div class="settings-item">
-        <button onclick="saveSettings()">Save Settings</button>
-      </div>
-    </div>
+        let mySites = JSON.parse(localStorage.getItem('mySites')) || [];
 
+        function navigate(sectionId) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                }
+            });
+        }
 
-  <script>
-    /***********************
-     * Data Initialization *
-     ***********************/
-    // Fixed apps (links not editable by the user)
-    let apps = [
-      { label: "Type", url: "https://masterd2012.github.io/Quoffice2025/type/" },
-      { label: "Notes", url: "https://masterd2012.github.io/Quoffice2025/notes/" },
-      { label: "Slides", url: "https://masterd2012.github.io/Quoffice2025/slides/" },
-      { label: "sheets", url: "https://masterd2012.github.io/Quoffice2025/sheets/app/" },
-    ];
-    // My Sites: load from localStorage or start empty
-    let mySites = JSON.parse(localStorage.getItem('mySites')) || [];
-    // Settings: Tip auto-refresh enabled by default (can be toggled in settings)
-    let settings = {
-      tipAutoRefresh: localStorage.getItem('tipAutoRefresh') === 'false' ? false : true
-    };
+        function renderApps() {
+            appsList.innerHTML = '';
+            myApps.forEach(app => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${app.url}" target="_blank">${app.name}</a>`;
+                appsList.appendChild(li);
+            });
+        }
 
-    /***********************
-     * Navigation Handling *
-     ***********************/
-    function navigate(page) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      if (page === 'apps' || page === 'home') {
-        document.getElementById('page-apps').classList.add('active');
-      } else if (page === 'sites') {
-        document.getElementById('page-sites').classList.add('active');
-        renderSites();
-      } else if (page === 'settings') {
-        document.getElementById('page-settings').classList.add('active');
-        document.getElementById('tipAutoRefreshToggle').checked = settings.tipAutoRefresh;
-      }
-      // Show or hide tip box based on settings and current page.
-      document.getElementById('tipBox').style.display = settings.tipAutoRefresh ? 'block' : 'none';
-    }
+        function renderSites() {
+            siteList.innerHTML = '';
+            mySites.forEach((site, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${site.url}" target="_blank">${site.label}</a> <button onclick="removeSite(${index})">Remove</button>`;
+                siteList.appendChild(li);
+            });
+        }
 
-    /**********************************
-     * My Apps: Drag & Drop Handling  *
-     **********************************/
-    function renderApps() {
-      const grid = document.getElementById('appGrid');
-      grid.innerHTML = '';
-      apps.forEach((app, index) => {
-        const div = document.createElement('div');
-        div.className = 'app-item';
-        div.draggable = true;
-        div.dataset.index = index;
-        div.innerText = app.label;
-        // Drag events
-        div.addEventListener('dragstart', dragStart);
-        div.addEventListener('dragover', dragOver);
-        div.addEventListener('drop', drop);
-        div.addEventListener('dragend', dragEnd);
-        // Open the app on click (if not dragging)
-        div.addEventListener('click', function(e) {
-          if (!this.classList.contains('dragging')) {
-            window.open(app.url, '_blank');
-          }
-        });
-        grid.appendChild(div);
-      });
-    }
+        function addSite() {
+            const label = document.getElementById('newSiteLabel').value.trim();
+            const url = document.getElementById('newSiteURL').value.trim();
+            if (label && url) {
+                mySites.push({ label, url });
+                localStorage.setItem('mySites', JSON.stringify(mySites));
+                document.getElementById('newSiteLabel').value = '';
+                document.getElementById('newSiteURL').value = '';
+                renderSites();
+            }
+        }
 
-    let dragSrcEl = null;
-    function dragStart(e) {
-      dragSrcEl = this;
-      this.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
-    function dragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
-    function drop(e) {
-      e.stopPropagation();
-      if (dragSrcEl !== this) {
-        let fromIndex = parseInt(dragSrcEl.dataset.index);
-        let toIndex = parseInt(this.dataset.index);
-        // Swap positions in the apps array
-        [apps[fromIndex], apps[toIndex]] = [apps[toIndex], apps[fromIndex]];
-        renderApps();
-      }
-      return false;
-    }
-    function dragEnd(e) {
-      this.classList.remove('dragging');
-    }
+        function removeSite(index) {
+            mySites.splice(index, 1);
+            localStorage.setItem('mySites', JSON.stringify(mySites));
+            renderSites();
+        }
 
-    /******************************
-     * My Sites: Manage User Sites *
-     ******************************/
+        function saveSettings() {
+            // Implement settings save functionality here
+            alert('Settings saved!');
+        }
 
-    <script src="scripts/fetchTip.js"></script>
-
-  <div id="tipContent">Loading tip...</div>
-
-  
-    function renderSites() {
-      const list = document.getElementById('siteList');
-      list.innerHTML = '';
-      mySites.forEach(site => {
-        const li = document.createElement('li');
-        li.innerHTML = `<a href="${site.url}" target="_blank">${site.label}</a>`;
-        list.appendChild(li);
-      });
-    }
-    function addSite() {
-      const label = document.getElementById('newSiteLabel').value.trim();
-      const url = document.getElementById('newSiteURL').value.trim();
-      if (label && url) {
-        mySites.push({ label, url });
-        localStorage.setItem('mySites', JSON.stringify(mySites));
-        document.getElementById('newSiteLabel').value = '';
-        document.getElementById('newSiteURL').value = '';
-        renderSites();
-      }
-    }
-
-
-    /***********************
-     * Initialize Launcher *
-     ***********************/
-    window.onload = function() {
-      renderApps();
-      navigate('apps');
-      if (settings.tipAutoRefresh) {
-        startTipAutoRefresh();
-      } else {
-        document.getElementById('tipBox').style.display = 'none';
-      }
-    }
-  </script>
+        window.onload = function() {
+            renderApps();
+            renderSites();
+            navigate('apps');
+        }
+    </script>
 </body>
 </html>

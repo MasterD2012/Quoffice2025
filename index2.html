@@ -267,38 +267,7 @@
     // List the tip file names available in your "totd" folder
     let tipFiles = ["tip1.txt", "tip2.txt", "tip3.txt"]; // update this list as needed
 
-  function fetchTip() {
-    fetch('/list-tips')
-      .then(response => response.json())
-      .then(tipFiles => {
-        if (tipFiles.length === 0) {
-          document.getElementById('tipContent').innerText = 'No tips available.';
-          return;
-        }
-        const randomTip = tipFiles[Math.floor(Math.random() * tipFiles.length)];
-        return fetch(`totd/${randomTip}`);
-      })
-      .then(response => response.text())
-      .then(text => {
-        document.getElementById('tipContent').innerText = text;
-      })
-      .catch(err => {
-        console.error('Error fetching tip:', err);
-        document.getElementById('tipContent').innerText = 'Failed to load tip.';
-      });
-  }
 
-
-    function startTipAutoRefresh() {
-      if (settings.tipAutoRefresh) {
-        fetchTip();
-        tipInterval = setInterval(fetchTip, 60000); // refresh every 60 seconds
-      }
-    }
-    function stopTipAutoRefresh() {
-      clearInterval(tipInterval);
-      tipInterval = null;
-    }
     function saveSettings() {
       settings.tipAutoRefresh = document.getElementById('tipAutoRefreshToggle').checked;
       localStorage.setItem('tipAutoRefresh', settings.tipAutoRefresh);

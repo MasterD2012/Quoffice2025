@@ -78,14 +78,6 @@
     }
     /* Settings Page */
     .settings-item { margin-bottom: 15px; }
-    /* Tip of the Day Box */
-    .tip-box {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
@@ -126,8 +118,6 @@
       <h1>Settings</h1>
       <div class="settings-item">
         <label>
-          <input type="checkbox" id="tipAutoRefreshToggle">
-          Enable Auto Refresh Tip of the Day
         </label>
       </div>
       <div class="settings-item">
@@ -254,27 +244,6 @@
       }
     }
 
-    /******************************
-     * Settings & Tip-of-the-Day  *
-     ******************************/
-    let tipInterval = null;
-    // List the tip file names available in your "totd" folder
-    let tipFiles = ["tip1.txt", "tip2.txt", "tip3.txt"]; // update this list as needed
-
-
-    function saveSettings() {
-      settings.tipAutoRefresh = document.getElementById('tipAutoRefreshToggle').checked;
-      localStorage.setItem('tipAutoRefresh', settings.tipAutoRefresh);
-      alert('Settings saved!');
-      // Restart or stop tip refresh based on setting
-      stopTipAutoRefresh();
-      if (settings.tipAutoRefresh) {
-        startTipAutoRefresh();
-        document.getElementById('tipBox').style.display = 'block';
-      } else {
-        document.getElementById('tipBox').style.display = 'none';
-      }
-    }
 
     /***********************
      * Initialize Launcher *

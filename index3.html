@@ -1,108 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Quoffice Launcher</title>
-  <style>
-    /* Your existing styles… */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f4f4;
-      color: #333;
-    }
-    /* Example styling for tip box */
-    #tipBox {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 15px;
-      max-width: 600px;
-      margin: 20px auto;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoffice 2025</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fluentui/web-components/dist/fluent.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+        .container {
+            text-align: center;
+            padding: 50px;
+        }
+        .app-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .app-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 150px;
+        }
+        .app-card a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #0078D4;
+        }
+    </style>
 </head>
 <body>
-  <!-- Your existing page content -->
-
-  <!-- For example, here is your navigation and main content -->
-  <header>
-    <h1>Quoffice Launcher</h1>
-    <!-- Other header content -->
-  </header>
-  
-  <main>
-    <!-- Your existing content like app grids, site lists, etc. -->
-    <section id="appsSection">
-      <!-- Your apps content -->
-    </section>
-    <section id="sitesSection">
-      <!-- Your sites content -->
-    </section>
-  </main>
-  
-  <!-- Tip of the Day Box -->
-  <div id="tipBox">Loading tip...</div>
-
-  <!-- Your existing scripts may go here -->
-  <script>
-    // Your existing JS functions (renderApps, navigate, etc.)
-  </script>
-
-  <!-- Tip of the Day System -->
-  <script>
-    // Change these values to match your GitHub repository details:
-    const username = "masterd2012";
-    const repo = "Quoffice2025";
-    const folder = "totd"; // Folder where tip files reside
-
-    // Fetch list of files from GitHub API in the specified folder.
-    function fetchTipList() {
-      const apiURL = `https://api.github.com/repos/${username}/${repo}/contents/${folder}`;
-      return fetch(apiURL)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch tip list");
-          }
-          return response.json();
-        })
-        .then(files => {
-          // Filter for files that match your expected pattern (e.g., t1.txt, t2.txt, etc.)
-          return files.filter(file => file.name.match(/^t\d+\.txt$/));
-        });
-    }
-
-    // Pick a random tip from the list and fetch its content
-    function fetchRandomTip() {
-      fetchTipList()
-        .then(tipFiles => {
-          if (tipFiles.length === 0) {
-            throw new Error("No tip files found");
-          }
-          const randomIndex = Math.floor(Math.random() * tipFiles.length);
-          const randomTip = tipFiles[randomIndex];
-          return fetch(randomTip.download_url);
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Failed to fetch tip content");
-          }
-          return response.text();
-        })
-        .then(text => {
-          document.getElementById("tipBox").innerText = text.trim();
-        })
-        .catch(error => {
-          console.error("Error fetching tip:", error);
-          document.getElementById("tipBox").innerText = "Failed to load tip.";
-        });
-    }
-
-    // Fetch a tip on page load...
-    fetchRandomTip();
-    // ...and then every 2 minutes (120,000 milliseconds)
-    setInterval(fetchRandomTip, 120000);
-  </script>
+    <div class="navbar">
+        <a href="#">Home</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/type/">Type</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/slides/">Slides</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/slides/app/">Sheets</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/notes/">Notes</a>
+    </div>
+    <div class="container">
+        <h1>Welcome to Quoffice 2025</h1>
+        <p>Your productivity suite, now redesigned with Fluent UI.</p>
+        <div class="app-links">
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/type/">Type</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/slides/">Slides</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/slides/app/">Sheets</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/notes/">Notes</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

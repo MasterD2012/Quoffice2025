@@ -3,89 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Type 2025 Online</title>
-    <link rel="icon" href="https://masterd2012.github.io/Quoffice2025/type/reascources/quoffice_icon.ico">
+    <title>Quoffice 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f3f3f3;
         }
         .ribbon {
-            width: 100%;
-            background: #f4f4f4;
-            padding: 10px;
             display: flex;
-            justify-content: space-between;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-        }
-        .ribbon button {
-            margin: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            border: none;
-            background: #ddd;
+            background: #ffffff;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         .editor-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
+            margin: 20px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .editor {
-            width: 80%;
-            height: 80vh;
-            border: 1px solid #ccc;
-            padding: 10px;
-            outline: none;
-            overflow-y: auto;
+        .button {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     <div class="ribbon">
-        <div>
-            <button onclick="formatText('bold')">Bold</button>
-            <button onclick="formatText('italic')">Italic</button>
-            <button onclick="formatText('underline')">Underline</button>
-        </div>
-        <div>
-            <button onclick="openFile()">Open</button>
-            <button onclick="saveFile()">Save</button>
-        </div>
+        <button class="button ms-Button"><span class="ms-Button-label">Bold</span></button>
+        <button class="button ms-Button"><span class="ms-Button-label">Italic</span></button>
+        <button class="button ms-Button"><span class="ms-Button-label">Underline</span></button>
+        <button class="button ms-Button" onclick="insertImage()"><span class="ms-Button-label">Insert Image</span></button>
     </div>
+    
     <div class="editor-container">
-        <div class="editor" contenteditable="true"></div>
+        <textarea id="editor"></textarea>
     </div>
     
     <script>
-        function formatText(command) {
-            document.execCommand(command, false, null);
-        }
+        tinymce.init({
+            selector: '#editor',
+            plugins: 'image code',
+            toolbar: 'bold italic underline | image',
+            image_uploadtab: true,
+            content_css: 'https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css'
+        });
         
-        function saveFile() {
-            const content = document.querySelector(".editor").innerHTML;
-            const blob = new Blob([content], { type: "text/plain" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "document.TYP2";
-            a.click();
-        }
-        
-        function openFile() {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = ".TYP2";
-            input.addEventListener("change", function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.querySelector(".editor").innerHTML = e.target.result;
-                    };
-                    reader.readAsText(file);
-                }
-            });
-            input.click();
+        function insertImage() {
+            tinymce.activeEditor.execCommand('mceInsertContent', false, '<img src="" alt="Image">');
         }
     </script>
 </body>

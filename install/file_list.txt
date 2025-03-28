@@ -1,15 +1,7 @@
 file_list.txt
-*/Help 2025/Help.exe
-*/Help 2025/path_to_image.jpg
-*/Help 2025/quoffice_icon.ico
-*/Paint Brush 2025/PaintBrush 2025.exe
-*/Paint Brush 2025/quoffice_icon.ico
-*/PenMania/PenMania.exe
-*/PenMania/bounce.wav
-*/PenMania/draw.wav
-*/PenMania/goal.wav
-*/Photo Viewer 2025/PhotoVeiwer.exe
-*/Photo Viewer 2025/quoffice_icon.ico
-*/Type 2025/Type 2025.exe
-*/Type 2025/quoffice_icon.ico
-Lisence agreement.txt
+License agreement.txt
+Help 2025/
+Paint Brush 2025/
+PenMania/
+Photo Viewer 2025/
+Type 2025/

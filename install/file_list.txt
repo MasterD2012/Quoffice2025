@@ -1,5 +1,4 @@
 file_list.txt
-License agreement.txt
 Help 2025/Help.exe
 Help 2025/path_to_image.jpg
 Help 2025/quoffice_icon.ico
@@ -13,3 +12,4 @@ Photo Viewer 2025/PhotoVeiwer.exe
 Photo Viewer 2025/quoffice_icon.ico
 Type 2025/Type 2025.exe
 Type 2025/quoffice_icon.ico
+Lisence agreement.txt

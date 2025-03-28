@@ -1,7 +1,7 @@
 file_list.txt
-License agreement.txt
 Help 2025/
 Paint Brush 2025/
 PenMania/
 Photo Viewer 2025/
 Type 2025/
+License agreement.txt

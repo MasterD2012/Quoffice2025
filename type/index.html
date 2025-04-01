@@ -1,75 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" href="https://masterd2012.github.io/Quoffice2025/type/reascources/quoffice_icon.ico/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quoffice 2025</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/office-ui-fabric-core/11.1.0/css/fabric.min.css">
+    <title>Type 2025 - Online</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f3f3f3;
-        }
-        .ribbon {
             display: flex;
-            background: #ffffff;
-            padding: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            flex-direction: column;
+            align-items: center;
         }
-        .editor-container {
-            margin: 20px;
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        .button {
-            margin-right: 10px;
-            cursor: pointer;
-            border: none;
-            background: #0078D4;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 3px;
-        }
-        .button:hover {
-            background: #005A9E;
-        }
-        #editor {
+        .toolbar {
             width: 100%;
-            min-height: 300px;
+            background: #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .editor {
+            width: 80%;
+            height: 80vh;
             border: 1px solid #ccc;
             padding: 10px;
+            margin-top: 10px;
             outline: none;
-            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="ribbon">
-        <button class="button" onclick="formatText('bold')">Bold</button>
-        <button class="button" onclick="formatText('italic')">Italic</button>
-        <button class="button" onclick="formatText('underline')">Underline</button>
-        <button class="button" onclick="insertImage()">Insert Image</button>
+    <div class="toolbar">
+        <button onclick="formatText('bold')">Bold</button>
+        <button onclick="formatText('italic')">Italic</button>
+        <button onclick="formatText('underline')">Underline</button>
+        <button onclick="saveFile()">Save</button>
+        <button onclick="openFile()">Open</button>
     </div>
-    
-    <div class="editor-container">
-        <div id="editor" contenteditable="true"></div>
-    </div>
+    <div class="editor" contenteditable="true"></div>
     
     <script>
         function formatText(command) {
             document.execCommand(command, false, null);
         }
         
-        function insertImage() {
-            const url = prompt("Enter image URL:");
-            if (url) {
-                document.execCommand("insertImage", false, url);
-            }
+        function saveFile() {
+            const content = document.querySelector(".editor").innerHTML;
+            const blob = new Blob([content], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "document.TYP2";
+            a.click();
+        }
+        
+        function openFile() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".TYP2";
+            input.addEventListener("change", function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.querySelector(".editor").innerHTML = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            input.click();
         }
     </script>
 </body>

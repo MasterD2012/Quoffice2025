@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type 2025 - Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .toolbar {
+            width: 100%;
+            background: #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .editor {
+            width: 80%;
+            height: 80vh;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            outline: none;
+            overflow-y: auto;
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="formatText('bold')">Bold</button>
+        <button onclick="formatText('italic')">Italic</button>
+        <button onclick="formatText('underline')">Underline</button>
+        <button onclick="saveFile()">Save</button>
+        <button onclick="openFile()">Open</button>
+    </div>
+    <div class="editor" contenteditable="true"></div>
+    
+    <script>
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+        
+        function saveFile() {
+            const content = document.querySelector(".editor").innerHTML;
+            const blob = new Blob([content], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "document.TYP2";
+            a.click();
+        }
+        
+        function openFile() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".TYP2";
+            input.addEventListener("change", function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.querySelector(".editor").innerHTML = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            input.click();
+        }
+    </script>
+</body>
+</html>

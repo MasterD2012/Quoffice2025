@@ -6,16 +6,16 @@
     <title>QCam - Advanced Camera App</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #111; color: white; font-family: Arial, sans-serif; }
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #111; color: white; font-family: Arial, sans-serif; overflow: hidden; }
         video, canvas { position: absolute; width: 100vw; height: 100vh; object-fit: cover; }
-        .controls { position: absolute; bottom: 10px; display: flex; gap: 10px; background: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 10px; }
+        .controls { position: absolute; bottom: 10px; display: flex; gap: 10px; background: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 10px; z-index: 10; }
         button, select { padding: 10px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px; }
         button { background: #ff4747; color: white; }
         select { background: white; color: black; }
     </style>
 </head>
 <body>
-    <video id="camera" autoplay></video>
+    <video id="camera" autoplay playsinline></video>
     <canvas id="canvas" style="display:none;"></canvas>
     <div class="controls">
         <button onclick="capture()">📸 Capture</button>
@@ -39,48 +39,66 @@
         let mediaRecorder;
         let chunks = [];
         let recording = false;
-        
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-            video.srcObject = stream;
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.ondataavailable = event => chunks.push(event.data);
-            mediaRecorder.onstop = () => {
-                let blob = new Blob(chunks, { type: 'video/webm' });
-                let link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'qcam_video.webm';
-                link.click();
-                chunks = [];
-            };
+
+        async function startCamera() {
+            try {
+                let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                video.srcObject = stream;
+                video.onloadedmetadata = () => video.play();
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = event => chunks.push(event.data);
+                mediaRecorder.onstop = () => {
+                    let blob = new Blob(chunks, { type: 'video/webm' });
+                    let link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'qcam_video.webm';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    chunks = [];
+                };
+            } catch (err) {
+                console.error("Camera access denied: ", err);
+                alert("Camera access denied. Please allow camera access in your browser settings and refresh the page.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            startCamera();
         });
-        
+
         function capture() {
+            if (!video.srcObject) return;
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             video.style.display = 'none';
             canvas.style.display = 'block';
         }
-        
+
         function retake() {
             video.style.display = 'block';
             canvas.style.display = 'none';
         }
-        
+
         function download() {
+            if (canvas.style.display === 'none') return;
             let link = document.createElement('a');
             link.download = 'qcam_photo.png';
             link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
-        
+
         function applyFilter() {
             let filter = document.getElementById('filter').value;
             canvas.style.filter = filter;
             video.style.filter = filter;
         }
-        
+
         function toggleRecording() {
+            if (!mediaRecorder) return;
             if (!recording) {
                 mediaRecorder.start();
                 document.querySelector("button[onclick='toggleRecording()']").innerText = '⏹ Stop Recording';

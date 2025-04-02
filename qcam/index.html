@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QCam - Advanced Camera App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #111; color: white; font-family: Arial, sans-serif; }
+        video, canvas { position: absolute; width: 100vw; height: 100vh; object-fit: cover; }
+        .controls { position: absolute; bottom: 10px; display: flex; gap: 10px; background: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 10px; }
+        button, select { padding: 10px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px; }
+        button { background: #ff4747; color: white; }
+        select { background: white; color: black; }
+    </style>
+</head>
+<body>
+    <video id="camera" autoplay></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div class="controls">
+        <button onclick="capture()">📸 Capture</button>
+        <button onclick="download()">💾 Download</button>
+        <button onclick="retake()">🔄 Retake</button>
+        <button onclick="toggleRecording()">🎥 Start Recording</button>
+        <select id="filter" onchange="applyFilter()">
+            <option value="none">No Filter</option>
+            <option value="grayscale(100%)">Grayscale</option>
+            <option value="sepia(100%)">Sepia</option>
+            <option value="invert(100%)">Invert</option>
+            <option value="blur(5px)">Blur</option>
+            <option value="brightness(150%)">Brightness</option>
+            <option value="contrast(150%)">Contrast</option>
+        </select>
+    </div>
+    <script>
+        let video = document.getElementById('camera');
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        let mediaRecorder;
+        let chunks = [];
+        let recording = false;
+        
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+            video.srcObject = stream;
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = event => chunks.push(event.data);
+            mediaRecorder.onstop = () => {
+                let blob = new Blob(chunks, { type: 'video/webm' });
+                let link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'qcam_video.webm';
+                link.click();
+                chunks = [];
+            };
+        });
+        
+        function capture() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            video.style.display = 'none';
+            canvas.style.display = 'block';
+        }
+        
+        function retake() {
+            video.style.display = 'block';
+            canvas.style.display = 'none';
+        }
+        
+        function download() {
+            let link = document.createElement('a');
+            link.download = 'qcam_photo.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function applyFilter() {
+            let filter = document.getElementById('filter').value;
+            canvas.style.filter = filter;
+            video.style.filter = filter;
+        }
+        
+        function toggleRecording() {
+            if (!recording) {
+                mediaRecorder.start();
+                document.querySelector("button[onclick='toggleRecording()']").innerText = '⏹ Stop Recording';
+            } else {
+                mediaRecorder.stop();
+                document.querySelector("button[onclick='toggleRecording()']").innerText = '🎥 Start Recording';
+            }
+            recording = !recording;
+        }
+    </script>
+</body>
+</html>

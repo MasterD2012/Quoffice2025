@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quoffice To-Do</title>
   <style>
+    /* General Styles */
     body {
       margin: 0;
       font-family: "Segoe UI", sans-serif;
       background: #f4f4f4;
     }
-
     /* Ribbon */
     .ribbon {
       display: flex;
@@ -20,40 +20,50 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .ribbon h1 {
       font-size: 20px;
       margin: 0;
     }
-
     .tabs {
       display: flex;
       gap: 20px;
     }
-
     .tab {
       cursor: pointer;
       font-weight: bold;
     }
-
+    .tab:hover {
+      text-decoration: underline;
+    }
+    /* Panels */
+    .panel {
+      display: none;
+      padding: 15px;
+      background: #fff5f5;
+      border-bottom: 2px solid #ff4d4d;
+    }
+    .panel.active {
+      display: block;
+    }
+    .panel button {
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
     /* Container */
     .container {
       padding: 20px;
     }
-
-    /* Task Input */
     .input-section {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 20px;
     }
-
-    input[type="text"] {
+    input[type="text"], select, input[type="date"] {
       flex: 1;
       padding: 10px;
       font-size: 16px;
     }
-
     button {
       padding: 10px 15px;
       background: #ff4d4d;
@@ -63,17 +73,13 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     button:hover {
       background: #cc0000;
     }
-
-    /* Task List */
     .task-list {
       list-style: none;
       padding: 0;
     }
-
     .task-item {
       background: white;
       margin-bottom: 10px;
@@ -82,102 +88,69 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
-
     .task-item.completed {
       text-decoration: line-through;
       color: gray;
       opacity: 0.7;
     }
-
     .task-item input[type="checkbox"] {
       margin-right: 10px;
+    }
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .input-section {
+        flex-direction: column;
+      }
+      input[type="text"], select, input[type="date"] {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- Ribbon -->
   <div class="ribbon">
     <h1>Quoffice To-Do</h1>
     <div class="tabs">
-      <div class="tab">Home</div>
-      <div class="tab">View</div>
-      <div class="tab">Tasks</div>
+      <div class="tab" onclick="showPanel('homePanel')">Home</div>
+      <div class="tab" onclick="showPanel('viewPanel')">View</div>
+      <div class="tab" onclick="showPanel('tasksPanel')">Tasks</div>
     </div>
   </div>
 
+  <!-- Panels -->
+  <div id="homePanel" class="panel active">
+    <button onclick="exportTasks()">Export Tasks</button>
+    <input type="file" id="importFile" onchange="importTasks(event)" />
+  </div>
+
+  <div id="viewPanel" class="panel">
+    <button onclick="filterTasks('all')">Show All</button>
+    <button onclick="filterTasks('completed')">Show Completed Only</button>
+    <button onclick="filterTasks('incomplete')">Show Incomplete Only</button>
+  </div>
+
+  <div id="tasksPanel" class="panel">
+    <button onclick="deleteAllTasks()">Delete All Tasks</button>
+    <button onclick="sortTasks()">Sort Alphabetically</button>
+  </div>
+
+  <!-- Main Content -->
   <div class="container">
     <div class="input-section">
       <input type="text" id="taskInput" placeholder="Enter a new task..." />
+      <select id="categoryInput">
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="date" id="dueDateInput" />
       <button onclick="addTask()">Add Task</button>
       <button onclick="clearCompleted()">Clear Completed</button>
     </div>
-
-    <ul id="taskList" class="task-list"></ul>
-  </div>
-
-  <script>
-    let tasks = [];
-
-    function loadTasks() {
-      const saved = localStorage.getItem("quofficeTasks");
-      if (saved) {
-        tasks = JSON.parse(saved);
-        renderTasks();
-      }
-    }
-
-    function saveTasks() {
-      localStorage.setItem("quofficeTasks", JSON.stringify(tasks));
-    }
-
-    function addTask() {
-      const input = document.getElementById("taskInput");
-      const text = input.value.trim();
-      if (text !== "") {
-        tasks.push({ text, done: false });
-        input.value = "";
-        saveTasks();
-        renderTasks();
-      }
-    }
-
-    function toggleTask(index) {
-      tasks[index].done = !tasks[index].done;
-      saveTasks();
-      renderTasks();
-    }
-
-    function deleteTask(index) {
-      tasks.splice(index, 1);
-      saveTasks();
-      renderTasks();
-    }
-
-    function clearCompleted() {
-      tasks = tasks.filter(task => !task.done);
-      saveTasks();
-      renderTasks();
-    }
-
-    function renderTasks() {
-      const list = document.getElementById("taskList");
-      list.innerHTML = "";
-      tasks.forEach((task, i) => {
-        const li = document.createElement("li");
-        li.className = "task-item" + (task.done ? " completed" : "");
-        li.innerHTML = `
-          <div>
-            <input type="checkbox" onclick="toggleTask(${i})" ${task.done ? "checked" : ""}/>
-            ${task.text}
-          </div>
-          <button onclick="deleteTask(${i})">Delete</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    loadTasks();
-  </script>
-</body>
-</html>
+    <ul id="
+::contentReference[oaicite:30]{index=30}
+ 

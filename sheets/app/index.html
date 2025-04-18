@@ -1,171 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sheets - Web Spreadsheet</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f3f3f3;
-        }
-        #ribbon {
-            background: #217346;
-            color: white;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .ribbon-section {
-            display: flex;
-            gap: 10px;
-        }
-        button, select {
-            padding: 5px 10px;
-            border: none;
-            background: white;
-            cursor: pointer;
-        }
-        button:hover, select:hover {
-            background: lightgray;
-        }
-        table {
-            border-collapse: collapse;
-            width: 90%;
-            margin: 20px auto;
-            background: white;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-        }
-        th, td {
-            border: 1px solid #ccc;
-            width: 80px;
-            height: 30px;
-            text-align: center;
-            position: relative;
-        }
-        input {
-            width: 100%;
-            height: 100%;
-            border: none;
-            text-align: center;
-            background: transparent;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sheets</title>
+  <link rel="icon" href="https://masterd2012.github.io/Quoffice2025/sheets/app/quoffice_icon.ico">
+  <style>
+    :root {
+      --accent: #b53030;
+      --bg-main: #ffe6e6;
+      --toolbar: #d54a4a;
+      --hover: #a42525;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-main);
+      color: #333;
+    }
+
+    header {
+      background-color: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .ribbon {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .ribbon-tabs {
+      display: flex;
+      background-color: var(--toolbar);
+    }
+
+    .ribbon-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: var(--toolbar);
+      color: white;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .ribbon-tab.active {
+      border-bottom: 3px solid var(--accent);
+      background: var(--hover);
+    }
+
+    .ribbon-content {
+      display: none;
+      background-color: var(--bg-main);
+      padding: 10px;
+    }
+
+    .ribbon-content.active {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .ribbon-content button, .ribbon-content select, .ribbon-content input[type="number"] {
+      margin: 5px;
+      padding: 5px 10px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background-color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 50px repeat(26, 100px);
+      grid-auto-rows: 30px;
+      overflow: auto;
+    }
+
+    .cell, .header-cell {
+      border: 1px solid #ccc;
+      padding: 4px;
+      background-color: white;
+    }
+
+    .header-cell {
+      background-color: #f8d1d1;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .row-header {
+      background-color: #f8d1d1;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    textarea.cell-input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      resize: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    .context-menu {
+      display: none;
+      position: absolute;
+      background: white;
+      border: 1px solid #aaa;
+      z-index: 1000;
+      padding: 5px;
+    }
+
+    .context-menu button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 5px;
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
-    <div id="ribbon">
-        <div class="ribbon-section">
-            <button onclick="saveSheet()">Save</button>
-            <button onclick="loadSheet()">Load</button>
-        </div>
-        <div class="ribbon-section">
-            <select id="font-selector" onchange="changeFont(this.value)">
-                <option value="Arial">Arial</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Courier New">Courier New</option>
-                <option value="Verdana">Verdana</option>
-            </select>
-        </div>
-    </div>
-    <h1>Sheets - Web Spreadsheet</h1>
-    <table id="spreadsheet">
-        <thead>
-            <tr>
-                <th></th>
-                <script>
-                    for (let i = 0; i < 10; i++) {
-                        document.write(`<th>${String.fromCharCode(65 + i)}</th>`);
-                    }
-                </script>
-            </tr>
-        </thead>
-        <tbody>
-            <script>
-                for (let i = 1; i <= 20; i++) {
-                    document.write('<tr>');
-                    document.write(`<th>${i}</th>`);
-                    for (let j = 0; j < 10; j++) {
-                        document.write('<td><input type="text" oninput="trackChanges()"></td>');
-                    }
-                    document.write('</tr>');
-                }
-            </script>
-        </tbody>
-    </table>
+  <header>
+    <h1>Sheets</h1>
+  </header>
 
-    <script>
-        let changesMade = false;
-        
-        function trackChanges() {
-            changesMade = true;
+  <div class="ribbon">
+    <div class="ribbon-tabs">
+      <div class="ribbon-tab active" onclick="switchTab('home')">Home</div>
+      <div class="ribbon-tab" onclick="switchTab('insert')">Insert</div>
+      <div class="ribbon-tab" onclick="switchTab('formulas')">Formulas</div>
+      <div class="ribbon-tab" onclick="switchTab('data')">Data</div>
+      <div class="ribbon-tab" onclick="switchTab('view')">View</div>
+      <div class="ribbon-tab" onclick="switchTab('edit')">Edit</div>
+      <div class="ribbon-tab" onclick="switchTab('file')">File</div>
+    </div>
+
+    <div id="home" class="ribbon-content active">
+      <button onclick="format('bold')">Bold</button>
+      <button onclick="format('italic')">Italic</button>
+      <button onclick="format('underline')">Underline</button>
+      <select onchange="setFontSize(this.value)">
+        <option value="12">12px</option>
+        <option value="14">14px</option>
+        <option value="16" selected>16px</option>
+        <option value="18">18px</option>
+        <option value="24">24px</option>
+      </select>
+    </div>
+
+    <div id="insert" class="ribbon-content">
+      <button onclick="alert('Insert Image')">Insert Image</button>
+      <button onclick="alert('Insert Chart')">Insert Chart</button>
+    </div>
+
+    <div id="formulas" class="ribbon-content">
+      <button onclick="alert('Function SUM(x:y)')">SUM</button>
+      <button onclick="alert('Function AVERAGE(x:y)')">AVERAGE</button>
+      <button onclick="alert('Function IF(x, y, z)')">IF</button>
+    </div>
+
+    <div id="data" class="ribbon-content">
+      <button onclick="alert('Sort feature')">Sort</button>
+      <button onclick="alert('Filter feature')">Filter</button>
+    </div>
+
+    <div id="view" class="ribbon-content">
+      <button onclick="zoomIn()">Zoom In</button>
+      <button onclick="zoomOut()">Zoom Out</button>
+    </div>
+
+    <div id="edit" class="ribbon-content">
+      <button onclick="document.execCommand('cut')">Cut</button>
+      <button onclick="document.execCommand('copy')">Copy</button>
+      <button onclick="document.execCommand('paste')">Paste</button>
+      <button onclick="document.execCommand('undo')">Undo</button>
+      <button onclick="document.execCommand('redo')">Redo</button>
+    </div>
+
+    <div id="file" class="ribbon-content">
+      <button onclick="saveSheet()">Save</button>
+      <input type="file" onchange="loadSheet(event)">
+    </div>
+  </div>
+
+  <div class="grid" id="sheet"></div>
+
+  <div id="context-menu" class="context-menu"></div>
+
+  <script>
+    const sheet = document.getElementById("sheet");
+    const cols = 26;
+    const rows = 100;
+
+    function createSheet() {
+      sheet.innerHTML = "";
+      sheet.appendChild(createHeaderCell(""));
+      for (let c = 0; c < cols; c++) {
+        sheet.appendChild(createHeaderCell(String.fromCharCode(65 + c)));
+      }
+      for (let r = 1; r <= rows; r++) {
+        sheet.appendChild(createHeaderCell(r));
+        for (let c = 0; c < cols; c++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          const textarea = document.createElement("textarea");
+          textarea.className = "cell-input";
+          textarea.setAttribute("data-cell", `${String.fromCharCode(65 + c)}${r}`);
+          textarea.addEventListener("contextmenu", showContextMenu);
+          cell.appendChild(textarea);
+          sheet.appendChild(cell);
         }
-        
-        window.addEventListener('beforeunload', function (e) {
-            if (changesMade) {
-                e.preventDefault();
-                e.returnValue = 'Are you sure you want to leave? There are unsaved changes.';
-            }
+      }
+    }
+
+    function createHeaderCell(content) {
+      const div = document.createElement("div");
+      div.className = isNaN(content) ? "header-cell" : "row-header";
+      div.textContent = content;
+      return div;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.ribbon-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ribbon-content').forEach(c => c.classList.remove('active'));
+      document.querySelector(`.ribbon-tab[onclick*="${tabId}"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function format(cmd) {
+      document.execCommand(cmd);
+    }
+
+    function setFontSize(size) {
+      document.execCommand("fontSize", false, "7");
+      let fontElements = document.getElementsByTagName("font");
+      for (let i = 0; i < fontElements.length; i++) {
+        if (fontElements[i].size == "7") {
+          fontElements[i].removeAttribute("size");
+          fontElements[i].style.fontSize = size + "px";
+        }
+      }
+    }
+
+    function saveSheet() {
+      const data = [];
+      const textareas = document.querySelectorAll(".cell-input");
+      textareas.forEach(ta => data.push({ cell: ta.getAttribute("data-cell"), value: ta.value }));
+      const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "my_sheet.SHEET";
+      a.click();
+    }
+
+    function loadSheet(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = JSON.parse(e.target.result);
+        data.forEach(entry => {
+          const textarea = document.querySelector(`[data-cell='${entry.cell}']`);
+          if (textarea) textarea.value = entry.value;
         });
-        
-        function saveSheet() {
-            let data = "APP = quoffice\nAVer = 2025\nCompatab = ok\n\nfile:\n";
-            let rows = document.querySelectorAll("tbody tr");
-            
-            rows.forEach((row, rowIndex) => {
-                let cells = row.querySelectorAll("td input");
-                cells.forEach((cell, colIndex) => {
-                    let colLetter = String.fromCharCode(65 + colIndex);
-                    let cellId = colLetter + (rowIndex + 1).toString().padStart(2, '0');
-                    data += `${cellId}: ${cell.value}\n`;
-                });
-            });
-            
-            let blob = new Blob([data], { type: 'text/plain' });
-            let link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'SheetFile.SHEET';
-            link.click();
-            
-            changesMade = false;
-        }
-        
-        function loadSheet() {
-            let input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.SHEET';
-            input.addEventListener('change', function() {
-                let file = input.files[0];
-                if (file) {
-                    let reader = new FileReader();
-                    reader.onload = function(e) {
-                        let content = e.target.result.split('\n');
-                        let rows = document.querySelectorAll("tbody tr");
-                        
-                        content.forEach(line => {
-                            if (line.includes(":")) {
-                                let [cellId, value] = line.split(":").map(s => s.trim());
-                                let colLetter = cellId.charAt(0);
-                                let rowNumber = parseInt(cellId.substring(1)) - 1;
-                                let colIndex = colLetter.charCodeAt(0) - 65;
-                                
-                                if (rowNumber >= 0 && rowNumber < rows.length && colIndex >= 0 && colIndex < 10) {
-                                    rows[rowNumber].querySelectorAll("td input")[colIndex].value = value;
-                                }
-                            }
-                        });
-                    };
-                    reader.readAsText(file);
-                }
-            });
-            input.click();
-        }
-        
-        function changeFont(font) {
-            document.querySelectorAll("td input").forEach(cell => {
-                cell.style.fontFamily = font;
-            });
-        }
-    </script>
+      };
+      reader.readAsText(file);
+    }
+
+    function zoomIn() {
+      document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) + 0.1).toFixed(1);
+    }
+
+    function zoomOut() {
+      document.body.style.zoom = (parseFloat(document.body.style.zoom || 1) - 0.1).toFixed(1);
+    }
+
+    function showContextMenu(event) {
+      event.preventDefault();
+      const menu = document.getElementById("context-menu");
+      menu.innerHTML = `
+        <button onclick="document.execCommand('cut')">Cut</button>
+        <button onclick="document.execCommand('copy')">Copy</button>
+        <button onclick="document.execCommand('paste')">Paste</button>
+      `;
+      menu.style.left = `${event.pageX}px`;
+      menu.style.top = `${event.pageY}px`;
+      menu.style.display = "block";
+    }
+
+    document.addEventListener("click", () => {
+      document.getElementById("context-menu").style.display = "none";
+    });
+
+    createSheet();
+  </script>
 </body>
 </html>

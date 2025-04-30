@@ -9,6 +9,7 @@
       padding: 0;
       overflow: hidden;
       height: 100%;
+      font-family: sans-serif;
     }
 
     #qboard {
@@ -20,87 +21,177 @@
     #controls {
       position: absolute;
       top: 10px;
-      right: 10px;
-      background: rgba(255, 255, 255, 0.8);
+      left: 10px;
+      background: rgba(255, 255, 255, 0.95);
       padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
       z-index: 10;
     }
 
-    #controls button {
-      font-size: 16px;
-      padding: 6px 12px;
-      margin: 0 5px;
+    #controls button, #controls .color-button {
+      margin: 3px;
+      padding: 6px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
       cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .color-button {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    .selected {
+      border: 2px solid black !important;
+    }
+
+    .section {
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
   <canvas id="qboard"></canvas>
   <div id="controls">
-    <button onclick="clearBoard()">Clear</button>
+    <div class="section">
+      <button onclick="clearBoard()">Clear</button>
+      <button onclick="saveImage()">Save</button>
+    </div>
+    <div class="section">
+      <span>Color:</span><br>
+      <button class="color-button selected" style="background: black;" onclick="selectColor('black', this)"></button>
+      <button class="color-button" style="background: red;" onclick="selectColor('red', this)"></button>
+      <button class="color-button" style="background: blue;" onclick="selectColor('blue', this)"></button>
+      <button class="color-button" style="background: green;" onclick="selectColor('green', this)"></button>
+      <button class="color-button" style="background: orange;" onclick="selectColor('orange', this)"></button>
+      <button class="color-button" style="background: white;" onclick="selectEraser(this)">🧽</button>
+    </div>
+    <div class="section">
+      <span>Thickness:</span><br>
+      <button onclick="setThickness(2, this)" class="selected">Thin</button>
+      <button onclick="setThickness(5, this)">Medium</button>
+      <button onclick="setThickness(10, this)">Thick</button>
+    </div>
   </div>
 
   <script>
     const canvas = document.getElementById('qboard');
     const ctx = canvas.getContext('2d');
-    let drawing = false;
-    let lastX, lastY;
+    const activeTouches = {};
+    let currentColor = 'black';
+    let currentThickness = 2;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    function startDraw(x, y) {
-      drawing = true;
-      [lastX, lastY] = [x, y];
-    }
-
-    function drawLine(x, y) {
-      if (!drawing) return;
+    function draw(x1, y1, x2, y2, color, thickness) {
       ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(x, y);
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = thickness;
       ctx.lineCap = 'round';
       ctx.stroke();
-      [lastX, lastY] = [x, y];
     }
 
-    function stopDraw() {
-      drawing = false;
-    }
+    // Mouse events
+    let isMouseDown = false;
+    let mouseX = 0, mouseY = 0;
 
-    // Mouse Events
-    canvas.addEventListener('mousedown', e => startDraw(e.offsetX, e.offsetY));
-    canvas.addEventListener('mousemove', e => drawLine(e.offsetX, e.offsetY));
-    canvas.addEventListener('mouseup', stopDraw);
-    canvas.addEventListener('mouseleave', stopDraw);
+    canvas.addEventListener('mousedown', e => {
+      isMouseDown = true;
+      mouseX = e.offsetX;
+      mouseY = e.offsetY;
+    });
 
-    // Touch Events
+    canvas.addEventListener('mousemove', e => {
+      if (!isMouseDown) return;
+      draw(mouseX, mouseY, e.offsetX, e.offsetY, currentColor, currentThickness);
+      mouseX = e.offsetX;
+      mouseY = e.offsetY;
+    });
+
+    canvas.addEventListener('mouseup', () => isMouseDown = false);
+    canvas.addEventListener('mouseleave', () => isMouseDown = false);
+
+    // Touch events
     canvas.addEventListener('touchstart', e => {
-      const touch = e.touches[0];
       const rect = canvas.getBoundingClientRect();
-      startDraw(touch.clientX - rect.left, touch.clientY - rect.top);
+      for (let touch of e.changedTouches) {
+        const id = touch.identifier;
+        activeTouches[id] = {
+          x: touch.clientX - rect.left,
+          y: touch.clientY - rect.top,
+          color: currentColor,
+          thickness: currentThickness
+        };
+      }
     });
 
     canvas.addEventListener('touchmove', e => {
-      const touch = e.touches[0];
       const rect = canvas.getBoundingClientRect();
-      drawLine(touch.clientX - rect.left, touch.clientY - rect.top);
-      e.preventDefault(); // prevent scrolling
+      for (let touch of e.changedTouches) {
+        const id = touch.identifier;
+        const old = activeTouches[id];
+        if (!old) continue;
+
+        const newX = touch.clientX - rect.left;
+        const newY = touch.clientY - rect.top;
+
+        draw(old.x, old.y, newX, newY, old.color, old.thickness);
+        activeTouches[id].x = newX;
+        activeTouches[id].y = newY;
+      }
+      e.preventDefault(); // prevent scroll
     });
 
-    canvas.addEventListener('touchend', stopDraw);
+    canvas.addEventListener('touchend', e => {
+      for (let touch of e.changedTouches) {
+        delete activeTouches[touch.identifier];
+      }
+    });
+
+    canvas.addEventListener('touchcancel', e => {
+      for (let touch of e.changedTouches) {
+        delete activeTouches[touch.identifier];
+      }
+    });
 
     function clearBoard() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function selectColor(color, button) {
+      currentColor = color;
+      document.querySelectorAll('.color-button').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+    }
+
+    function selectEraser(button) {
+      currentColor = 'white';
+      document.querySelectorAll('.color-button').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+    }
+
+    function setThickness(thickness, button) {
+      currentThickness = thickness;
+      document.querySelectorAll('#controls .section:nth-child(3) button').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+    }
+
+    function saveImage() {
+      const link = document.createElement('a');
+      link.download = 'qboard_drawing.png';
+      link.href = canvas.toDataURL();
+      link.click();
     }
   </script>
 </body>

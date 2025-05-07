@@ -1,56 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>My Sites - Quoffice 2025</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #ffffff, #f0f0f0);
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #ffffff, #f3f3f3);
       padding: 20px;
+      color: #333;
     }
 
     h1 {
-      color: #c40000;
-      font-size: 2em;
+      color: #b30000;
     }
 
-    .site-list {
+    #site-form {
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="url"] {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 200px;
+    }
+
+    button {
+      padding: 8px 14px;
+      margin: 5px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #005a9e;
+    }
+
+    ul {
       list-style: none;
       padding: 0;
     }
 
-    .site-list li {
-      background-color: #fff;
+    li {
+      background: white;
+      margin: 10px 0;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 10px;
       box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
     }
 
-    .site-list a {
-      text-decoration: none;
-      color: #0078d7;
-      font-weight: bold;
+    .actions {
+      float: right;
     }
 
-    .site-list a:hover {
-      text-decoration: underline;
+    .actions button {
+      background-color: #aaa;
+      margin-left: 5px;
+    }
+
+    .actions button:hover {
+      background-color: #888;
+    }
+
+    .clear {
+      clear: both;
     }
   </style>
 </head>
 <body>
   <h1>My Sites - Quoffice 2025</h1>
-  <p>Here are some helpful links for using and exploring Quoffice 2025:</p>
-  <ul class="site-list">
-    <li><a href="https://quoffice-help.example.com" target="_blank">Quoffice Help Center</a></li>
-    <li><a href="https://quoffice-templates.example.com" target="_blank">Download Templates</a></li>
-    <li><a href="https://quoffice-plugins.example.com" target="_blank">Official Plugins Store</a></li>
-    <li><a href="https://quoffice-community.example.com" target="_blank">Community Forum</a></li>
-    <li><a href="https://your-website.example.com" target="_blank">My Personal Quoffice Site</a></li>
-  </ul>
+  <form id="site-form">
+    <input type="text" id="site-name" placeholder="Site Name" required />
+    <input type="url" id="site-url" placeholder="https://example.com" required />
+    <button type="submit">Add Site</button>
+  </form>
+  <ul id="site-list"></ul>
+
+  <script>
+    const siteForm = document.getElementById('site-form');
+    const siteList = document.getElementById('site-list');
+    const nameInput = document.getElementById('site-name');
+    const urlInput = document.getElementById('site-url');
+
+    let sites = JSON.parse(localStorage.getItem('mySites') || '[]');
+
+    function renderSites() {
+      siteList.innerHTML = '';
+      sites.forEach((site, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <a href="${site.url}" target="_blank">${site.name}</a>
+          <div class="actions">
+            <button onclick="editSite(${index})">Edit</button>
+            <button onclick="removeSite(${index})">Delete</button>
+          </div>
+          <div class="clear"></div>
+        `;
+        siteList.appendChild(li);
+      });
+    }
+
+    siteForm.onsubmit = function (e) {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const url = urlInput.value.trim();
+      if (!name || !url) return;
+      sites.push({ name, url });
+      localStorage.setItem('mySites', JSON.stringify(sites));
+      nameInput.value = '';
+      urlInput.value = '';
+      renderSites();
+    };
+
+    window.removeSite = function (index) {
+      if (confirm('Are you sure you want to delete this site?')) {
+        sites.splice(index, 1);
+        localStorage.setItem('mySites', JSON.stringify(sites));
+        renderSites();
+      }
+    };
+
+    window.editSite = function (index) {
+      const site = sites[index];
+      const newName = prompt('Edit site name:', site.name);
+      const newUrl = prompt('Edit site URL:', site.url);
+      if (newName && newUrl) {
+        sites[index] = { name: newName.trim(), url: newUrl.trim() };
+        localStorage.setItem('mySites', JSON.stringify(sites));
+        renderSites();
+      }
+    };
+
+    // Initial render
+    renderSites();
+  </script>
 </body>
 </html>

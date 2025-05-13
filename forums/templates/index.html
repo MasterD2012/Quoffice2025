@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Latest Threads</h2>
+<a href="/new" class="btn btn-primary mb-3">Start New Thread</a>
+<ul class="list-group">
+    {% for thread in threads %}
+    <li class="list-group-item">
+        <strong>[{{ thread[1] }}]</strong>
+        <a href="/thread/{{ thread[0] }}">{{ thread[2] }}</a>
+        <span class="text-muted">by {{ thread[4] }} on {{ thread[5][:10] }}</span>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

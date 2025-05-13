@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>{{ thread[2] }}</h2>
+<p><strong>{{ thread[4] }}</strong> on {{ thread[5][:10] }}</p>
+<p>{{ thread[3] }}</p>
+<hr>
+<h4>Replies</h4>
+{% for reply in replies %}
+<div class="border p-2 mb-2 bg-white">
+    <p>{{ reply[2] }}</p>
+    <small class="text-muted">{{ reply[3] }} | {{ reply[4][:10] }}</small>
+</div>
+{% endfor %}
+<hr>
+<form method="post">
+    <div class="mb-2">
+        <label>Your Reply</label>
+        <textarea name="content" class="form-control" rows="3" required></textarea>
+    </div>
+    <button class="btn btn-primary">Reply</button>
+</form>
+{% endblock %}

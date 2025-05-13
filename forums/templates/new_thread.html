@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>New Thread</h2>
+<form method="post">
+    <div class="mb-2">
+        <label>Category</label>
+        <select name="category" class="form-control">
+            <option>General Help</option>
+            <option>Bugs</option>
+            <option>Tips & Tricks</option>
+        </select>
+    </div>
+    <div class="mb-2">
+        <label>Title</label>
+        <input name="title" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label>Content</label>
+        <textarea name="content" class="form-control" rows="5" required></textarea>
+    </div>
+    <button class="btn btn-success">Post Thread</button>
+</form>
+{% endblock %}

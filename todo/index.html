@@ -2,155 +2,290 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quoffice To-Do</title>
+  <link rel="icon" href="https://masterd2012.github.io/Quoffice2025/todo/ToDoIcon.ico">
+  <title>ToDo</title>
   <style>
-    /* General Styles */
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff8b5;
+      color: #333;
     }
-    /* Ribbon */
-    .ribbon {
-      display: flex;
-      background: linear-gradient(to right, #b30000, #ff4d4d);
-      color: white;
-      padding: 10px 20px;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .ribbon h1 {
-      font-size: 20px;
-      margin: 0;
-    }
-    .tabs {
-      display: flex;
-      gap: 20px;
-    }
-    .tab {
-      cursor: pointer;
+
+    header {
+      background-color: #ffeb3b;
+      color: #000;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
       font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .tab:hover {
-      text-decoration: underline;
-    }
-    /* Panels */
-    .panel {
-      display: none;
-      padding: 15px;
-      background: #fff5f5;
-      border-bottom: 2px solid #ff4d4d;
-    }
-    .panel.active {
-      display: block;
-    }
-    .panel button {
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    /* Container */
+
     .container {
-      padding: 20px;
+      max-width: 600px;
+      margin: 2rem auto;
+      background: #fffde7;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    .input-section {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input[type="text"], select, input[type="date"] {
-      flex: 1;
+
+    input[type="text"] {
+      width: 60%;
       padding: 10px;
-      font-size: 16px;
+      font-size: 1rem;
+      border: 2px solid #fbc02d;
+      border-radius: 5px;
+      outline: none;
     }
+
     button {
       padding: 10px 15px;
-      background: #ff4d4d;
-      color: white;
+      background-color: #fdd835;
       border: none;
       border-radius: 5px;
+      font-size: 1rem;
       cursor: pointer;
-      font-weight: bold;
+      margin-left: 10px;
     }
+
     button:hover {
-      background: #cc0000;
+      background-color: #fbc02d;
     }
-    .task-list {
+
+    ul {
       list-style: none;
       padding: 0;
+      margin-top: 1rem;
     }
-    .task-item {
-      background: white;
-      margin-bottom: 10px;
+
+    li {
+      background-color: #fffde7;
       padding: 10px;
-      border-left: 5px solid #ff4d4d;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
+      border-left: 5px solid #fdd835;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    .task-item.completed {
+
+    li.completed {
+      color: grey;
       text-decoration: line-through;
-      color: gray;
-      opacity: 0.7;
     }
-    .task-item input[type="checkbox"] {
-      margin-right: 10px;
+
+    .delete-btn {
+      background-color: #ff7043;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    /* Responsive Design */
-    @media (max-width: 600px) {
-      .input-section {
-        flex-direction: column;
-      }
-      input[type="text"], select, input[type="date"] {
-        width: 100%;
-      }
+
+    .delete-btn:hover {
+      background-color: #f4511e;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #fffde7;
+      min-width: 180px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1;
+      border: 1px solid #fbc02d;
+      border-radius: 5px;
+    }
+
+    .dropdown-content button {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .dropdown-content button:hover {
+      background-color: #fff59d;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .colored-line {
+      text-decoration: none !important;
+      position: relative;
+    }
+
+    .colored-line::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      background-color: var(--lineColor, grey);
     }
   </style>
 </head>
 <body>
-
-  <!-- Ribbon -->
-  <div class="ribbon">
-    <h1>Quoffice To-Do</h1>
-    <div class="tabs">
-      <div class="tab" onclick="showPanel('homePanel')">Home</div>
-      <div class="tab" onclick="showPanel('viewPanel')">View</div>
-      <div class="tab" onclick="showPanel('tasksPanel')">Tasks</div>
-    </div>
-  </div>
-
-  <!-- Panels -->
-  <div id="homePanel" class="panel active">
-    <button onclick="exportTasks()">Export Tasks</button>
-    <input type="file" id="importFile" onchange="importTasks(event)" />
-  </div>
-
-  <div id="viewPanel" class="panel">
-    <button onclick="filterTasks('all')">Show All</button>
-    <button onclick="filterTasks('completed')">Show Completed Only</button>
-    <button onclick="filterTasks('incomplete')">Show Incomplete Only</button>
-  </div>
-
-  <div id="tasksPanel" class="panel">
-    <button onclick="deleteAllTasks()">Delete All Tasks</button>
-    <button onclick="sortTasks()">Sort Alphabetically</button>
-  </div>
-
-  <!-- Main Content -->
+  <header>ToDo</header>
   <div class="container">
-    <div class="input-section">
-      <input type="text" id="taskInput" placeholder="Enter a new task..." />
-      <select id="categoryInput">
-        <option value="Work">Work</option>
-        <option value="Personal">Personal</option>
-        <option value="Other">Other</option>
-      </select>
-      <input type="date" id="dueDateInput" />
-      <button onclick="addTask()">Add Task</button>
-      <button onclick="clearCompleted()">Clear Completed</button>
+    <input type="text" id="taskInput" placeholder="Enter a new task...">
+    <button onclick="addTask()">Add</button>
+
+    <div class="dropdown">
+      <button>Line Through Options</button>
+      <div class="dropdown-content">
+        <button onclick="clearLineThrough()">Clear</button>
+        <button onclick="changeLineColor()">Line Through Colour</button>
+        <button onclick="toggleRepresentation()">Representation</button>
+      </div>
     </div>
-    <ul id="
-::contentReference[oaicite:30]{index=30}
- 
+
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    let useColoredLine = JSON.parse(localStorage.getItem("useColoredLine")) || false;
+    let currentLineColor = localStorage.getItem("lineColor") || "grey";
+
+    function saveTasks() {
+      const items = [];
+      document.querySelectorAll("#taskList li").forEach(li => {
+        const span = li.querySelector(".task-text");
+        items.push({
+          text: span.textContent,
+          completed: span.classList.contains("completed"),
+          coloredLine: span.classList.contains("colored-line")
+        });
+      });
+      localStorage.setItem("todoItems", JSON.stringify(items));
+      localStorage.setItem("useColoredLine", JSON.stringify(useColoredLine));
+      localStorage.setItem("lineColor", currentLineColor);
+    }
+
+    function loadTasks() {
+      const savedItems = JSON.parse(localStorage.getItem("todoItems")) || [];
+      savedItems.forEach(item => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span class="task-text">${item.text}</span>
+          <button class="delete-btn" onclick="removeTask(this)">Delete</button>
+        `;
+        const span = li.querySelector('.task-text');
+
+        if (item.completed || item.coloredLine) {
+          if (item.coloredLine) {
+            span.classList.add("colored-line");
+            span.style.setProperty('--lineColor', currentLineColor);
+          } else {
+            span.classList.add("completed");
+          }
+          span.style.color = "grey";
+        }
+
+        li.addEventListener("click", function (e) {
+          if (!e.target.classList.contains("delete-btn")) {
+            toggleLineThrough(span);
+            saveTasks();
+          }
+        });
+
+        document.getElementById("taskList").appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const taskText = taskInput.value.trim();
+      if (taskText === "") return;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span class="task-text">${taskText}</span>
+        <button class="delete-btn" onclick="removeTask(this)">Delete</button>
+      `;
+      const span = li.querySelector('.task-text');
+
+      li.addEventListener("click", function (e) {
+        if (!e.target.classList.contains("delete-btn")) {
+          toggleLineThrough(span);
+          saveTasks();
+        }
+      });
+
+      document.getElementById("taskList").appendChild(li);
+      taskInput.value = "";
+      saveTasks();
+    }
+
+    function removeTask(button) {
+      button.parentElement.remove();
+      saveTasks();
+    }
+
+    function toggleLineThrough(span) {
+      if (span.classList.contains("completed") || span.classList.contains("colored-line")) {
+        span.classList.remove("completed", "colored-line");
+        span.style.color = "";
+      } else {
+        if (useColoredLine) {
+          span.classList.add("colored-line");
+          span.style.setProperty('--lineColor', currentLineColor);
+        } else {
+          span.classList.add("completed");
+        }
+        span.style.color = "grey";
+      }
+    }
+
+    function clearLineThrough() {
+      const items = document.querySelectorAll(".task-text");
+      items.forEach(item => {
+        item.classList.remove("completed", "colored-line");
+        item.style.color = "";
+      });
+      saveTasks();
+    }
+
+    function changeLineColor() {
+      const newColor = prompt("Enter a color for the line (e.g., red, #00ff00):", currentLineColor);
+      if (newColor) {
+        currentLineColor = newColor;
+        document.querySelectorAll(".colored-line").forEach(item => {
+          item.style.setProperty('--lineColor', currentLineColor);
+        });
+        localStorage.setItem("lineColor", currentLineColor);
+        saveTasks();
+      }
+    }
+
+    function toggleRepresentation() {
+      useColoredLine = !useColoredLine;
+      alert("Line Through representation is now set to: " + (useColoredLine ? "Colored Line" : "Standard Text Line-Through"));
+      saveTasks();
+    }
+
+    document.getElementById("taskInput").addEventListener("keyup", function (e) {
+      if (e.key === "Enter") {
+        addTask();
+      }
+    });
+
+    // Load on page load
+    loadTasks();
+  </script>
+</body>
+</html>

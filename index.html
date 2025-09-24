@@ -1,94 +1,105 @@
 <!DOCTYPE html>
-<html>
-<style>
-a:link {
-  color: white;
-  background-color: transparent;
-  text-decoration: none;
-}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoffice 2025</title>
+    <link rel="icon" href="Q2025Logo.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fluentui/web-components/dist/fluent.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZXNK7K2EJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-a:visited {
-  color: white;
-  background-color: transparent;
-  text-decoration: none;
-}
-
-a:hover {
-  color: grey;
-  background-color: transparent;
-  text-decoration: underline;
-}
-
-a:active {
-  color: white;
-  background-color: transparent;
-  text-decoration: underline;
-}
-body, html {
-  height: 100%;
-  margin: 0;
-}
-
-.bgimg {
-  background-image: url('https://wallpapercave.com/wp/u0FTYvt.jpg');
-  height: 100%;
-  background-position: center;
-  background-size: cover;
-  position: relative;
-  color: white;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 25px;
-}
-
-.topright {
-  position: absolute;
-  top: 0;
-  right: 16px;
-}
-
-.topleft {
-  position: absolute;
-  top: 0;
-  left: 16px;
-}
-
-.bottomleft {
-  position: absolute;
-  bottom: 0;
-  left: 16px;
-}
-
-.middle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-hr {
-  margin: auto;
-  width: 40%;
-}
-</style>
+      gtag('config', 'G-QZXNK7K2EJ');
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+        .container {
+            text-align: center;
+            padding: 50px;
+        }
+        .app-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .app-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 150px;
+        }
+        .app-card a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #0078D4;
+        }
+    </style>
+</head>
 <body>
-
-<div class="bgimg">
-  <div class="topleft">
-    <p>Quoffice 2025</p>
-  </div>
-  <div class="topright">
-    <a href="https://masterd2012.github.io/Quoffice2025/index2.html/">Go to Quoffice now!</a>
-  </div>
-  <div class="middle">
-    <h1>OUT NOW!</h1>
-    <hr>
-    <p>Click the link in the top to send you to Quoffice</p>
-  </div>
-  <div class="bottomleft">
-    <p>Click the link to continue</p>
-  </div>
-</div>
-
+    <div class="navbar">
+        <a href="#">Home</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/templates/" target="_blank">Templates</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/mysites/" target="_blank">My Sites</a>
+        <a href="https://masterd2012.github.io/Quoffice2025/help/" target="_blank">Help and about</a>
+    </div>
+    <div class="container">
+        <h1>Welcome to Quoffice 2025</h1>
+        <div class="app-links">
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/type/" target="_blank">Type</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/slides/" target="_blank">Slides</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/sheets/app/" target="_blank">Sheets</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/notes/" target="_blank">Notes</a>
+            </div>
+        </div>
+        <p>Here are our other apps</p>
+        <div class="app-links">
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/qcam/" target="_blank">Q Cam</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/todo/" target="_blank">To Do</a>
+            </div>
+            <div class="app-card">
+                <a href="https://masterd2012.github.io/Quoffice2025/qboard/" target="_blank">QBoard</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -3,103 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quoffice 2025 - Development Site</title>
+    <title>Quoffice 2025</title>
     <link rel="icon" href="Q2025Logo.ico">
+
+    <!-- Fluent UI -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fluentui/web-components/dist/fluent.css">
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZXNK7K2EJ"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-QZXNK7K2EJ');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QZXNK7K2EJ');
     </script>
+
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f3f3f3;
-            margin: 0;
-            padding: 0;
+        :root {
+            --accent: #0078D4;
+            --bg: #f5f7fb;
+            --card-bg: #ffffff;
         }
+
+        body {
+            font-family: "Segoe UI", system-ui, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            color: #222;
+        }
+
+        /* NAVBAR */
         .navbar {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            background-color: #ffffff;
-            padding: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 14px 40px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
-        .navbar a {
+
+        .navbar .logo {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .navbar nav a {
+            margin-left: 20px;
             text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            padding: 10px 15px;
+            font-weight: 600;
+            color: #444;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.2s;
         }
-        .navbar a:hover {
-            background-color: #ddd;
-            border-radius: 5px;
+
+        .navbar nav a:hover {
+            background: rgba(0,120,212,0.1);
         }
-        .container {
+
+        /* HERO */
+        .hero {
             text-align: center;
-            padding: 50px;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, #0078D4, #4aa3ff);
+            color: white;
         }
-        .app-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
         }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        /* SECTIONS */
+        .section {
+            max-width: 1100px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        /* APP GRID */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+        }
+
         .app-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px 20px;
             text-align: center;
-            width: 150px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+
+        .app-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+        }
+
         .app-card a {
             text-decoration: none;
-            font-weight: bold;
-            color: #0078D4;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-top: 10px;
+        }
+
+        .app-icon {
+            font-size: 40px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
         }
     </style>
 </head>
+
 <body>
-    <div class="navbar">
-        <a href="#">Home</a>
-        <a href="https://masterd2012.github.io/Quoffice2025/templates/" target="_blank">Templates</a>
-        <a href="https://masterd2012.github.io/Quoffice2025/mysites/" target="_blank">My Sites</a>
-        <a href="https://masterd2012.github.io/Quoffice2025/help/" target="_blank">Help and about</a>
-    </div>
-    <div class="container">
+
+    <header class="navbar">
+        <div class="logo">Quoffice 2025</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="https://masterd2012.github.io/Quoffice2025/templates/" target="_blank">Templates</a>
+            <a href="https://masterd2012.github.io/Quoffice2025/mysites/" target="_blank">My Sites</a>
+            <a href="https://masterd2012.github.io/Quoffice2025/help/" target="_blank">Help & About</a>
+            <a href="https://github.com/MasterD2012/Quoffice2025/" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <section class="hero">
         <h1>Welcome to Quoffice 2025</h1>
-        <div class="app-links">
+        <p>A modern, lightweight office suite — built for the web</p>
+    </section>
+
+    <section class="section">
+        <h2>Main Apps</h2>
+        <div class="app-grid">
             <div class="app-card">
+                <div class="app-icon">📝</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/type/" target="_blank">Type</a>
             </div>
             <div class="app-card">
+                <div class="app-icon">📊</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/slides/" target="_blank">Slides</a>
             </div>
             <div class="app-card">
+                <div class="app-icon">📈</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/sheets/app/" target="_blank">Sheets</a>
             </div>
             <div class="app-card">
+                <div class="app-icon">🗒️</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/notes/" target="_blank">Notes</a>
             </div>
         </div>
-        <p>Here are our other apps</p>
-        <div class="app-links">
+    </section>
+
+    <section class="section">
+        <h2>Other Apps</h2>
+        <div class="app-grid">
             <div class="app-card">
+                <div class="app-icon">📷</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/qcam/" target="_blank">Q Cam</a>
             </div>
             <div class="app-card">
+                <div class="app-icon">✅</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/todo/" target="_blank">To Do</a>
             </div>
             <div class="app-card">
+                <div class="app-icon">⌨️</div>
                 <a href="https://masterd2012.github.io/Quoffice2025/qboard/" target="_blank">QBoard</a>
             </div>
         </div>
-    </div>
+    </section>
+
+    <section class="section">
+        <h2>Other Websites</h2>
+        <div class="app-grid">
+            <div class="app-card">
+                <div class="app-icon">🌐</div>
+                <a href="https://masterd2012.github.io/" target="_blank">MasterD2012 Home</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2025 Quoffice — Built by MasterD2012
+    </footer>
+
 </body>
 </html>

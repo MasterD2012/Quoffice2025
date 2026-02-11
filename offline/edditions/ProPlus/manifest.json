@@ -1,0 +1,64 @@
+{
+  "manifest_version": "1.0",
+  "package_name": "Quoffice Offline Beta Milestone 1",
+  "package_version": "0.0.1",
+
+  "apps": [
+    {
+      "id": "app_one",
+      "name": "Launch",
+      "version": "0.0.1",
+      "install_dir": "apps",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/offline/"
+    },
+    {
+      "id": "app_two",
+      "name": "Type",
+      "version": "0.0.1",
+      "install_dir": "apps/Type",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/type/offline/"
+    },
+    {
+      "id": "app_three",
+      "name": "Sheets",
+      "version": "0.0.1",
+      "install_dir": "apps/Sheets",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/sheets/offline/"
+    },
+    {
+      "id": "app_four",
+      "name": "Slides",
+      "version": "0.0.1",
+      "install_dir": "apps/Slides",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/slides/offline/"
+    },
+    {
+      "id": "app_five",
+      "name": "Notes",
+      "version": "0.0.1",
+      "install_dir": "apps/Notes",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/notes/offline/"
+    },
+    {
+      "id": "app_six",
+      "name": "QCam",
+      "version": "0.0.1",
+      "install_dir": "apps/QCam",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/qcam/offline/"
+    },
+    {
+      "id": "app_seven",
+      "name": "To Do",
+      "version": "0.0.1",
+      "install_dir": "apps/ToDo",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/todo/offline/"
+    },
+    {
+      "id": "app_eight",
+      "name": "QBoard",
+      "version": "0.0.1",
+      "install_dir": "apps/QBoard",
+      "source_url": "https://masterd2012.github.io/Quoffice2025/qboard/offline/"
+    }
+  ]
+}

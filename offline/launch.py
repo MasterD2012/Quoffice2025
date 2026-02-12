@@ -1,10 +1,19 @@
 import tkinter as tk
-import webbrowser
+import subprocess
+import os
 
 # ---------- Helpers ----------
-def open_link(url):
-    if url != "#":
-        webbrowser.open(url)
+def open_file(path):
+    """Open a Python file or EXE file."""
+    if not os.path.exists(path):
+        print(f"File not found: {path}")
+        return
+
+    # If it's a Python file, run it with Python
+    if path.endswith(".py"):
+        subprocess.Popen(["python", path])
+    else:  # Otherwise assume it's an executable
+        subprocess.Popen([path])
 
 # ---------- Root ----------
 root = tk.Tk()
@@ -35,7 +44,6 @@ canvas.configure(yscrollcommand=scrollbar.set)
 canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
-# Enable mouse wheel scrolling
 def _on_mousewheel(event):
     canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
@@ -56,10 +64,6 @@ logo.pack(side="left", padx=30)
 
 nav_links = [
     ("Home", "#"),
-    ("Templates", "https://masterd2012.github.io/Quoffice2025/templates/"),
-    ("My Sites", "https://masterd2012.github.io/Quoffice2025/mysites/"),
-    ("Help & About", "https://masterd2012.github.io/Quoffice2025/help/"),
-    ("GitHub", "https://github.com/MasterD2012/Quoffice2025/")
 ]
 
 for text, link in reversed(nav_links):
@@ -71,7 +75,7 @@ for text, link in reversed(nav_links):
         fg="#444",
         bd=0,
         cursor="hand2",
-        command=lambda l=link: open_link(l)
+        command=lambda l=link: print(f"Link clicked: {l}")  # Placeholder
     )
     btn.pack(side="right", padx=10)
 
@@ -114,7 +118,7 @@ def create_section(title, apps):
     grid = tk.Frame(section, bg="#f5f7fb")
     grid.pack(padx=40)
 
-    for i, (icon, name, link) in enumerate(apps):
+    for i, (icon, name, path) in enumerate(apps):
         card = tk.Frame(
             grid,
             bg=CARD_BG,
@@ -140,26 +144,22 @@ def create_section(title, apps):
             bg=CARD_BG,
             bd=0,
             cursor="hand2",
-            command=lambda l=link: open_link(l)
+            command=lambda p=path: open_file(p)
         )
         btn.pack()
 
 # ---------- Sections ----------
 create_section("Main Apps", [
-    ("📝", "Type", "https://masterd2012.github.io/Quoffice2025/type/"),
-    ("📊", "Slides", "https://masterd2012.github.io/Quoffice2025/slides/"),
-    ("📈", "Sheets", "https://masterd2012.github.io/Quoffice2025/sheets/app/"),
-    ("🗒️", "Notes", "https://masterd2012.github.io/Quoffice2025/notes/")
+    ("📝", "Type", r"type/type.py"),
+    ("📊", "Slides", r"slides/slides.py"),
+    ("📈", "Sheets", r"sheets/sheets.py"),
+    ("🗒️", "Notes", r"notes/notes.py")
 ])
 
 create_section("Other Apps", [
-    ("📷", "Q Cam", "https://masterd2012.github.io/Quoffice2025/qcam/"),
-    ("✅", "To Do", "https://masterd2012.github.io/Quoffice2025/todo/"),
-    ("🖎🏻", "QBoard", "https://masterd2012.github.io/Quoffice2025/qboard/")
-])
-
-create_section("Other Websites", [
-    ("🌐", "MasterD2012 Home", "https://masterd2012.github.io/")
+    ("📷", "Q Cam", r"qcam/qcam.py"),
+    ("✅", "To Do", r"todo/todo.py"),
+    ("🖎🏻", "QBoard", r"qboard/qboard.py")
 ])
 
 # ---------- Footer ----------

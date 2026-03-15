@@ -1,84 +1,114 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Error 689 – Page Not Found</title>
+<title>Quoffice Error</title>
 
 <style>
+
 body{
-    margin:0;
-    font-family:Segoe UI, Arial, sans-serif;
-    background:#f5f7fb;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    height:100vh;
+margin:0;
+font-family:"Segoe UI", Arial, sans-serif;
+background:#4ea1c4;
+color:white;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
+
+/* PAGE CONTENT */
 
 .container{
-    text-align:center;
-    background:white;
-    padding:50px;
-    border-radius:12px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.1);
-    max-width:520px;
+max-width:1100px;
+padding:60px 70px;
 }
 
-.code{
-    font-size:80px;
-    font-weight:700;
-    color:#3b82f6;
-    margin-bottom:10px;
-}
+/* TITLE */
 
 .title{
-    font-size:26px;
-    margin-bottom:10px;
+font-size:78px;
+font-weight:300;
+margin-bottom:20px;
 }
 
-.text{
-    color:#666;
-    margin-bottom:30px;
+/* MAIN MESSAGE */
+
+.message{
+font-size:28px;
+line-height:1.4;
+max-width:1000px;
+margin-bottom:140px;
 }
 
-button{
-    background:#3b82f6;
-    color:white;
-    border:none;
-    padding:12px 26px;
-    border-radius:6px;
-    font-size:15px;
-    cursor:pointer;
-    transition:0.2s;
+/* ERROR DETAILS */
+
+.details{
+font-size:18px;
+opacity:0.9;
+margin-bottom:40px;
 }
 
-button:hover{
-    background:#2563eb;
+.details p{
+margin:6px 0;
 }
+
+/* BUTTON */
+
+.button{
+display:inline-flex;
+align-items:center;
+gap:20px;
+background:#2c6e8c;
+padding:18px 45px;
+border-radius:14px;
+font-size:26px;
+text-decoration:none;
+color:white;
+border:2px solid rgba(0,0,0,0.25);
+transition:all .18s ease;
+}
+
+.button:hover{
+background:#245b73;
+transform:translateY(-2px);
+}
+
+.arrow{
+font-size:32px;
+}
+
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="code">689</div>
+<div class="title">Quoffice</div>
 
-<div class="title">
-Uh oh! We can’t find what you're looking for.
+<div class="message">
+When looking for a file, we experienced a very unusual error.  
+The file you are looking for is missing, damaged, or corrupt so we can't display or give it to you.  
+Please try again later. We are sorry for any inconvenience caused by this defect.
 </div>
 
-<div class="text">
-The page you tried to access may have been moved, deleted,
-or never existed in the first place.
+<div class="details">
+
+<p>Error number: <strong>689</strong></p>
+<p>Description: File doesn’t exist on this server</p>
+<p>Please try again later</p>
+<p>If this issue persists, contact us using the Help and Support page.</p>
+
 </div>
 
-<!-- <button onclick="window.location.href='index.html'">
-Return to Home
-</button> --> 
+<button class="button" onclick="history.back()">
+<span class="arrow">←</span>
+Go back
+</button>
 
 </div>
 
 </body>
 </html>
+```
